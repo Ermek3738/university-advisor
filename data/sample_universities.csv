@@ -1,0 +1,11 @@
+name,country,city,website,programs,ielts_min,toefl_min,gpa_min,tuition_min,tuition_max,intakes,scholarship_available,notes
+University of Edinburgh,UK,Edinburgh,https://www.ed.ac.uk,"Computer Science, Business, Engineering, Medicine",6.5,92,3.0,22000,28000,"September","Partial","One of the top UK universities. Strong research programs."
+Maastricht University,Netherlands,Maastricht,https://www.maastrichtuniversity.nl,"Business, Law, Psychology, Health Sciences",6.0,80,2.8,9000,12000,"September","Yes","Problem-based learning approach. Affordable for EU/EEA."
+University of Toronto,Canada,Toronto,https://www.utoronto.ca,"Engineering, Computer Science, Finance, Medicine",6.5,100,3.3,35000,55000,"September, January","Partial","Top Canadian university. Excellent co-op programs."
+TU Munich,Germany,Munich,https://www.tum.de,"Engineering, Computer Science, Natural Sciences",6.5,88,3.2,0,3000,"October, April","Yes","No tuition fees for most programs. World-class engineering."
+University of Melbourne,Australia,Melbourne,https://www.unimelb.edu.au,"Business, Arts, Engineering, Medicine",6.5,79,3.0,30000,42000,"February, July","Partial","Top Australian university. Post-study work visa available."
+Lund University,Sweden,Lund,https://www.lu.se,"Engineering, Social Sciences, Business, Law",6.5,90,3.0,15000,18000,"September","Yes","English-taught programs. Free tuition for EU students."
+University of Amsterdam,Netherlands,Amsterdam,https://www.uva.nl,"Economics, Law, Social Sciences, Natural Sciences",6.0,80,2.7,8000,12000,"September, February","Partial","Vibrant city. Many English programs available."
+McGill University,Canada,Montreal,https://www.mcgill.ca,"Medicine, Law, Engineering, Business",6.5,100,3.5,20000,35000,"September","Partial","Bilingual city. Prestigious institution. Lower fees than US."
+University of Groningen,Netherlands,Groningen,https://www.rug.nl,"Economics, Psychology, Law, Engineering",6.0,80,2.7,8000,14000,"September","Yes","Over 150 English programs. Scholarship opportunities."
+Heidelberg University,Germany,Heidelberg,https://www.uni-heidelberg.de,"Medicine, Natural Sciences, Humanities",6.0,85,3.0,1500,3000,"October","Partial","Oldest university in Germany. Excellent medical program."

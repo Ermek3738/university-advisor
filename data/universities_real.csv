@@ -1,0 +1,94 @@
+name,country,city,website,programs,tuition_min,tuition_max,tuition_currency,notes
+City University London (INTO),UK,London,https://www.city.ac.uk,,24140,24195,GBP,Provider: INTO. Also available via Kaplan (alternate).
+University of Exeter (INTO),UK,Exeter,https://www.exeter.ac.uk,,17620,17715,GBP,Provider: INTO. Foundation and Year 1 only. No direct entry.
+University of Manchester (INTO),UK,Manchester,https://www.manchester.ac.uk,,22095,22190,GBP,Provider: INTO.
+Anglia Ruskin University (Navitas),UK,Cambridge,https://www.aru.ac.uk,,16000,,GBP,Provider: Navitas. Note: past issues with accommodation.
+University of Portsmouth (Navitas),UK,Portsmouth,https://www.port.ac.uk,,15750,,GBP,Provider: Navitas. Price is per 2 semesters.
+Brunel University London (Navitas),UK,London,https://www.brunel.ac.uk,,17950,,GBP,Provider: Navitas. Price is per 2 semesters.
+Oxford Brookes University (QA),UK,Oxford,https://www.brookes.ac.uk,,17250,18250,GBP,Provider: QA. Possible discount of £3000 on Foundation.
+Solent University (QA),UK,Southampton,https://www.solent.ac.uk,,17250,18250,GBP,Provider: QA. Possible discount of £3000 on Foundation.
+Royal Holloway (Study Group),UK,London,https://www.royalholloway.ac.uk,,21310,,GBP,Provider: Study Group.
+University of Sheffield (Study Group),UK,Sheffield,https://www.sheffield.ac.uk,,21310,,GBP,Provider: Study Group.
+Durham University (Study Group),UK,Durham,https://www.durham.ac.uk,,21310,,GBP,Provider: Study Group.
+University of Westminster (Kaplan),UK,London,https://www.westminster.ac.uk,,22760,25530,GBP,Provider: Kaplan. Foundation / Year 1 / Pre-Masters available.
+Queen Mary University of London (Kaplan),UK,London,https://www.qmul.ac.uk,,22760,25530,GBP,Provider: Kaplan.
+MPW College,UK,London,https://www.mpw.ac.uk,,38750,40600,GBP,School program. GCSE and A-Level available.
+David Game College,UK,London,https://www.davidgame.ac.uk,,23650,37500,GBP,School program.
+English Path,UK,London,https://www.englishpath.com,,1120,1280,GBP,Language courses. 4-week program. Homestay from £190/week.
+Florida International University (Shorelight),USA,Miami,https://www.fiu.edu,,21012,,USD,Provider: Shorelight. Discounts up to $10000 available.
+American University (Shorelight),USA,Washington DC,https://www.american.edu,,,, Provider: Shorelight.
+Louisiana State University (Shorelight),USA,Baton Rouge,https://www.lsu.edu,,,,Provider: Shorelight.
+University of Illinois Chicago (Shorelight),USA,Chicago,https://www.uic.edu,,,,Provider: Shorelight.
+Suffolk University (INTO),USA,Boston,https://www.suffolk.edu,,,,Provider: INTO.
+Drew University (INTO),USA,New Jersey,https://www.drew.edu,,,,Provider: INTO.
+George Mason University (INTO),USA,Virginia,https://www.gmu.edu,,,,Provider: INTO.
+Oregon State University (INTO),USA,Oregon,https://oregonstate.edu,,,,Provider: INTO.
+Colorado State University (INTO),USA,Colorado,https://www.colostate.edu,,,,Provider: INTO.
+Pace University (Kaplan),USA,New York,https://www.pace.edu,,,,Provider: Kaplan. Pathway program.
+Arizona State University (Kaplan),USA,Arizona,https://www.asu.edu,,,,Provider: Kaplan.
+Simmons University (Kaplan),USA,Boston,https://www.simmons.edu,,,,Provider: Kaplan.
+Queens College (Navitas),USA,New York,https://www.qc.cuny.edu,,,,Provider: Navitas.
+San Francisco State University (Oxford International),USA,San Francisco,https://www.sfsu.edu,,,,Provider: Oxford International Pathway.
+Mercy College New York (Oxford International),USA,New York,https://www.mercy.edu,,,,Provider: Oxford International.
+Westcliff University,USA,California,https://www.westcliff.edu,,18408,,USD,Direct admissions.
+University of North Florida,USA,Jacksonville,https://www.unf.edu,,,,Direct admissions.
+New York Film Academy,USA,New York,https://www.nyfa.edu,,,,Direct admissions.
+Webster University,USA,Missouri,https://www.webster.edu,,,,Direct admissions.
+Texas State University,USA,San Marcos,https://www.txstate.edu,,,,Direct admissions.
+Georgian College,Canada,Barrie,https://www.georgiancollege.ca,,,,
+Durham College,Canada,Oshawa,https://www.durhamcollege.ca,,,,
+Saint-Lawrence College,Canada,Kingston,https://www.sl.on.ca,,,,
+Thompson Rivers University,Canada,Kamloops,https://www.tru.ca,,,,
+Langara College,Canada,Vancouver,https://www.langara.ca,,,,
+Niagara College,Canada,Niagara,https://www.niagaracollege.ca,,,,
+SAIT Alberta (Kaplan),Canada,Calgary,https://www.sait.ca,,,,Provider: Kaplan.
+George Brown College,Canada,Toronto,https://www.georgebrown.ca,,,,
+University of Windsor,Canada,Windsor,https://www.uwindsor.ca,,,,
+Douglas College,Canada,Vancouver,https://www.douglascollege.ca,,,,
+EU Business School Geneva,Switzerland,Geneva,https://www.euruni.edu,,,,Degree programs available.
+Swiss Education Group,Switzerland,Various,https://www.swisseducation.com,,,,
+BHMS Business and Hotel Management School,Switzerland,Lucerne,https://www.bhms.ch,,,,
+SRH University,Germany,Heidelberg,https://www.srh-university.com,,,,
+Fresenius University,Germany,Various,https://www.hs-fresenius.de,,,,
+IU International University of Applied Sciences,Germany,Various,https://www.iu.org,,,,Formerly IUBH. Online and on-campus programs.
+Macromedia University,Germany,Munich,https://www.macromedia-fachhochschule.de,,,,
+UE University of Europe,Germany,Berlin,https://www.ue-germany.com,,13000,,EUR,Discounts up to 50% depending on GPA.
+Lancaster University Germany (Navitas),Germany,Leipzig,https://www.lancaster.ac.uk/germany,,,,Provider: Navitas.
+Kedge Business School,France,Bordeaux,https://www.kedge.edu,,,,
+Audencia Business School,France,Nantes,https://www.audencia.com,,,,
+EU Business School Barcelona,Spain,Barcelona,https://www.euruni.edu,,,,Degree programs available.
+Hispania School,Spain,Barcelona,https://www.hispania.org,,,,Language school.
+University of Debrecen,Hungary,Debrecen,https://www.unideb.hu,,8000,,EUR,Scholarship up to 90% (UD Scholarship). Medical program priced separately.
+IBS Budapest,Hungary,Budapest,https://www.ibs-b.hu,,,,
+EKA University of Applied Sciences,Latvia,Riga,https://www.eka.edu.lv,,,,
+TSI Transport and Telecommunication Institute,Latvia,Riga,https://www.tsi.lv,,,,
+OCA Prague,Czech Republic,Prague,https://www.oca.cz,,5500,,EUR,
+OnCampus Foundation (Netherlands),Netherlands,Various,https://www.oncampus.de,,22440,30460,GBP,2-semester or 3-semester foundation programs.
+The Hague University of Applied Sciences (Navitas),Netherlands,The Hague,https://www.thehagueuniversity.com,,14950,,EUR,Provider: Navitas.
+Wittenborg University,Netherlands,Apeldoorn,https://www.wittenborg.eu,,11800,,EUR,
+HULT International Business School,Global,Various,https://www.hult.edu,,25800,38900,GBP,Campuses in San Francisco / Boston / London / Dubai.
+Heriot-Watt University Dubai,UAE,Dubai,https://www.hw.ac.uk/dubai,,,,
+University of Applied Sciences UE Dubai,UAE,Dubai,https://www.ue-germany.com,,13000,,EUR,Discounts up to 50% depending on GPA.
+University of Wollongong Dubai,UAE,Dubai,https://www.uowdubai.ac.ae,,,,
+Sunway University,Malaysia,Kuala Lumpur,https://www.sunway.edu.my,,,,
+Asia Pacific University (APU),Malaysia,Kuala Lumpur,https://www.apu.edu.my,,8000,9000,USD,Foundation from $8000. Bachelor's $8500-$9000.
+BAU International University,Turkey,Istanbul,https://www.bau.edu.tr,,,,
+TED University,Turkey,Ankara,https://www.tedu.edu.tr,,,,
+Yasar University,Turkey,Izmir,https://www.yasar.edu.tr,,,,
+ARUCAD Cyprus,Cyprus,Nicosia,https://www.arucad.edu.tr,,,,
+European University of Lefke,Cyprus,Lefke,https://www.eul.edu.tr,,,,
+James Cook University Singapore,Singapore,Singapore,https://www.jcu.edu.sg,,,,
+Curtin University Singapore (Navitas),Singapore,Singapore,https://www.curtin.edu.sg,,,,Provider: Navitas.
+Xi'an Jiaotong-Liverpool University,China,Suzhou,https://www.xjtlu.edu.cn,,,,
+Solbridge International School of Business,South Korea,Daejeon,https://www.solbridge.ac.kr,,10000,,USD,Discounts based on interview / English / GPA.
+KUAS Kyoto University of Art and Design,Japan,Kyoto,https://www.kuas.ac.jp,,,,
+Tokyo International University,Japan,Tokyo,https://www.tiu.ac.jp,,10000,,USD,
+Navitas Universities Australia,Australia,Various,https://www.navitas.com,,30000,,AUD,Provider: Navitas. Multiple campuses.
+Vilnius Gediminas Technical University,Lithuania,Vilnius,https://www.vilniustech.lt,,,,Also known as VILNIUS TECH.
+Up Education New Zealand,New Zealand,Auckland,https://www.up.education,,,,
+Auckland University of Technology (AUT),New Zealand,Auckland,https://www.aut.ac.nz,,,,Also known as IUT.
+PIHMS Pacific International Hotel Management School,New Zealand,New Plymouth,https://www.pihms.ac.nz,,20000,,USD,
+DVC Diablo Valley College,USA,California,https://www.dvc.edu,,,,3 colleges in California.
+Valencia College,USA,Orlando,https://www.valenciacollege.edu,,,,
+Cascadia College,USA,Bothell,https://www.cascadia.edu,,,,Near Seattle Washington state.
+San Jose City College,USA,San Jose,https://www.sjcc.edu,,,,Near San Francisco.
