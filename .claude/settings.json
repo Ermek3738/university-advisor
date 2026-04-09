@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from models import Base, engine; Base.metadata.create_all\\(engine\\); print\\('OK'\\)\")",
+      "Bash(python3 -c \"from models import Base, engine; Base.metadata.create_all\\(engine\\); print\\('OK'\\)\")"
+    ],
+    "additionalDirectories": [
+      "/Users/ramilsalihar/development/sidehustle/university-advisor"
+    ]
+  }
+}

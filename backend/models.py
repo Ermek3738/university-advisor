@@ -30,9 +30,12 @@ class University(Base):
     scholarship_available = Column(String, nullable=True)  # "Yes / No / Partial"
     notes = Column(Text, nullable=True)           # any extra info from scrape
 
+    tuition_usd = Column(Float, nullable=True)           # always USD, populated post-scrape
+
     # Meta
     scrape_status = Column(String, default="pending")   # pending / success / failed
     last_scraped = Column(DateTime, nullable=True)
+    re_scrape_after = Column(DateTime, nullable=True)   # auto-requeue after this date
     created_at = Column(DateTime, default=datetime.utcnow)
 
 engine = create_engine("sqlite:///./universities.db", connect_args={"check_same_thread": False})
