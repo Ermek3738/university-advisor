@@ -67,7 +67,7 @@ def import_csv(filepath: str, update: bool = False):
                 continue
 
             fields = parse_row(row)
-            exists = db.query(University).filter_by(website=row["website"]).first()
+            exists = db.query(University).filter_by(name=row["name"]).first()
 
             if exists:
                 if update:
