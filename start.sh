@@ -1,4 +1,4 @@
 #!/bin/bash
 cd backend
-python import_universities.py --file ../data/universities_real.csv
+python import_universities.py --file data/universities_real.csv --update
 uvicorn main:app --host 0.0.0.0 --port $PORT
