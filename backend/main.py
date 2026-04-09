@@ -58,7 +58,8 @@ class ChatResponse(BaseModel):
 
 def filter_universities(db: Session, profile: StudentProfile) -> List[University]:
     """Pre-filter universities before sending to Claude."""
-    query = db.query(University).filter(University.scrape_status != "pending")
+    from sqlalchemy import or_
+    query = db.query(University)
 
     # GPA filter
     if profile.gpa is not None:
@@ -78,25 +79,28 @@ def filter_universities(db: Session, profile: StudentProfile) -> List[University
             (University.toefl_min == None) | (University.toefl_min <= profile.toefl)
         )
 
-    # Budget filter
+    # Budget filter (use tuition_usd if available, fall back to tuition_min)
     if profile.budget_usd is not None:
         query = query.filter(
-            (University.tuition_min == None) | (University.tuition_min <= profile.budget_usd)
+            or_(
+                University.tuition_usd == None,
+                University.tuition_usd <= profile.budget_usd,
+                University.tuition_min == None,
+                University.tuition_min <= profile.budget_usd,
+            )
         )
 
-    # Country filter
+    # Country filter — fixed: individual OR clauses instead of joined ILIKE
     if profile.preferred_countries:
-        countries_lower = [c.lower() for c in profile.preferred_countries]
-        query = query.filter(
-            University.country.ilike(f"%{'%'.join(countries_lower)}%") |
-            University.country.in_(profile.preferred_countries)
-        )
+        countries_lower = [c.strip().lower() for c in profile.preferred_countries]
+        country_filters = [University.country.ilike(f"%{c}%") for c in countries_lower]
+        query = query.filter(or_(*country_filters))
 
-    results = query.limit(40).all()
+    results = query.limit(93).all()
 
-    # If too few results, relax filters and try again
+    # If too few results, relax all filters and return everything
     if len(results) < 5:
-        results = db.query(University).limit(40).all()
+        results = db.query(University).all()
 
     return results
 
