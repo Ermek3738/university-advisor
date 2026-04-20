@@ -1,4 +1,4 @@
-# 🎓 UniAdvisor — Study Abroad Consultant Chatbot
+# UniAdvisor — Study Abroad Consultant Chatbot
 
 AI-powered chatbot that helps consultants match students to the right universities from your partner database.
 
