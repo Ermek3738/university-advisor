@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, Text, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+import os
 
 Base = declarative_base()
 
@@ -38,7 +39,14 @@ class University(Base):
     re_scrape_after = Column(DateTime, nullable=True)   # auto-requeue after this date
     created_at = Column(DateTime, default=datetime.utcnow)
 
-engine = create_engine("sqlite:///./universities.db", connect_args={"check_same_thread": False})
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    # Supabase/Postgres: use direct connection (port 5432), not pooler
+    engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+else:
+    engine = create_engine("sqlite:///./universities.db", connect_args={"check_same_thread": False})
+
 Base.metadata.create_all(bind=engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

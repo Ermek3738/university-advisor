@@ -1,4 +1,5 @@
-fastapi 
-uvicorn 
-anthropic 
-sqlalchemy 
+fastapi
+uvicorn
+anthropic
+sqlalchemy
+psycopg2-binary
