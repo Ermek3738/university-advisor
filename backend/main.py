@@ -5,29 +5,27 @@ Endpoints:
   POST /chat          → main chatbot endpoint
   GET  /universities  → list all universities (with filters)
   GET  /stats         → database stats
-  POST /scrape/{id}   → trigger scrape for one university
 
-Install:
-  pip install fastapi uvicorn anthropic sqlalchemy
+Environment variables required:
+  ANTHROPIC_API_KEY   → your Anthropic key
+  DATABASE_URL        → Supabase PostgreSQL URL (falls back to SQLite locally)
 
-Run:
+Run locally:
   uvicorn main:app --reload
 """
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, List
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 import anthropic
 import os
-import sys
 
-sys.path.append("../backend")
 from models import University, SessionLocal, get_db
 
-app = FastAPI(title="University Advisor API")
+app = FastAPI(title="AI-Sana API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,14 +39,14 @@ client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 # ── Pydantic models ────────────────────────────────────────────────────────────
 
 class StudentProfile(BaseModel):
-    message: str                         # free-text from consultant
-    gpa: Optional[float] = None          # 0-4.0
-    ielts: Optional[float] = None        # e.g. 6.5
-    toefl: Optional[int] = None          # e.g. 80
-    budget_usd: Optional[int] = None     # annual budget
+    message: str
+    gpa: Optional[float] = None
+    ielts: Optional[float] = None
+    toefl: Optional[int] = None
+    budget_usd: Optional[int] = None
     preferred_countries: Optional[List[str]] = []
     preferred_programs: Optional[List[str]] = []
-    history: Optional[List[dict]] = []   # conversation history
+    history: Optional[List[dict]] = []
 
 class ChatResponse(BaseModel):
     reply: str
@@ -56,30 +54,25 @@ class ChatResponse(BaseModel):
 
 # ── Filtering logic ────────────────────────────────────────────────────────────
 
-def filter_universities(db: Session, profile: StudentProfile) -> List[University]:
-    """Pre-filter universities before sending to Claude."""
-    from sqlalchemy import or_
+def filter_universities(db: Session, profile: "StudentProfile") -> List[University]:
+    """Hard eligibility filter — only universities the student qualifies for."""
     query = db.query(University)
 
-    # GPA filter
     if profile.gpa is not None:
         query = query.filter(
             (University.gpa_min == None) | (University.gpa_min <= profile.gpa)
         )
 
-    # English filter (IELTS)
     if profile.ielts is not None:
         query = query.filter(
             (University.ielts_min == None) | (University.ielts_min <= profile.ielts)
         )
 
-    # English filter (TOEFL)
     if profile.toefl is not None:
         query = query.filter(
             (University.toefl_min == None) | (University.toefl_min <= profile.toefl)
         )
 
-    # Budget filter (use tuition_usd if available, fall back to tuition_min)
     if profile.budget_usd is not None:
         query = query.filter(
             or_(
@@ -90,7 +83,6 @@ def filter_universities(db: Session, profile: StudentProfile) -> List[University
             )
         )
 
-    # Country filter — fixed: individual OR clauses instead of joined ILIKE
     if profile.preferred_countries:
         countries_lower = [c.strip().lower() for c in profile.preferred_countries]
         country_filters = [University.country.ilike(f"%{c}%") for c in countries_lower]
@@ -98,22 +90,71 @@ def filter_universities(db: Session, profile: StudentProfile) -> List[University
 
     results = query.limit(93).all()
 
-    # If too few results, relax all filters and return everything
+    # Fallback: if too few results relax all filters
     if len(results) < 5:
         results = db.query(University).all()
 
     return results
 
+
+def score_university(uni: University, profile: "StudentProfile") -> float:
+    """Rank universities by how well they match the student's preferences."""
+    score = 0.0
+
+    # Country preference match
+    if profile.preferred_countries:
+        for country in profile.preferred_countries:
+            if uni.country and country.lower() in uni.country.lower():
+                score += 3
+                break
+
+    # Program keyword match
+    if profile.preferred_programs and uni.programs:
+        programs_lower = uni.programs.lower()
+        for prog in profile.preferred_programs:
+            if prog.lower() in programs_lower:
+                score += 2
+
+    # Scholarship bonus
+    if uni.scholarship_available:
+        s = uni.scholarship_available.lower()
+        if "yes" in s:
+            score += 2
+        elif "partial" in s:
+            score += 1
+
+    # Budget headroom (tuition well below budget = better fit)
+    if profile.budget_usd and uni.tuition_usd:
+        headroom = (profile.budget_usd - uni.tuition_usd) / profile.budget_usd
+        if headroom > 0.2:
+            score += 1
+
+    # GPA headroom (student well above minimum = safer bet)
+    if profile.gpa and uni.gpa_min:
+        if (profile.gpa - uni.gpa_min) >= 0.5:
+            score += 1
+
+    return score
+
+
+def rank_universities(unis: List[University], profile: "StudentProfile", top_n: int = 15) -> List[University]:
+    scored = [(u, score_university(u, profile)) for u in unis]
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return [u for u, _ in scored[:top_n]]
+
+
 def universities_to_context(unis: List[University]) -> str:
-    """Convert university list to text for Claude."""
+    """Serialize universities to text for Claude's context."""
     lines = []
     for u in unis:
         line = f"- **{u.name}** ({u.country}, {u.city})"
         line += f"\n  Website: {u.website}"
-        if u.tuition_min:
-            line += f"\n  Tuition: ${u.tuition_min:,.0f}"
+        if u.tuition_usd:
+            line += f"\n  Tuition: ~${u.tuition_usd:,.0f}/year (USD)"
+        elif u.tuition_min:
+            line += f"\n  Tuition: {u.tuition_currency or 'USD'} {u.tuition_min:,.0f}"
             if u.tuition_max:
-                line += f" – ${u.tuition_max:,.0f}/year"
+                line += f" – {u.tuition_max:,.0f}/year"
         if u.ielts_min:
             line += f"\n  IELTS: {u.ielts_min}"
         if u.toefl_min:
@@ -121,7 +162,7 @@ def universities_to_context(unis: List[University]) -> str:
         if u.gpa_min:
             line += f"\n  Min GPA: {u.gpa_min}"
         if u.programs:
-            line += f"\n  Programs: {u.programs[:120]}"
+            line += f"\n  Programs: {u.programs[:80]}"
         if u.intakes:
             line += f"\n  Intakes: {u.intakes}"
         if u.application_deadline:
@@ -133,7 +174,7 @@ def universities_to_context(unis: List[University]) -> str:
         lines.append(line)
     return "\n\n".join(lines)
 
-# ── Chat endpoint ──────────────────────────────────────────────────────────────
+# ── System prompt ──────────────────────────────────────────────────────────────
 
 SYSTEM_PROMPT = """You are an expert university admissions consultant assistant for a study abroad agency based in Central Asia.
 Your job is to help consultants quickly find the best matching universities for their students.
@@ -183,18 +224,22 @@ After all 5 add a comparison table and a 3-sentence consultant recommendation in
 Use your own knowledge for rankings, living costs, visa info and career prospects.
 Be specific and actionable. The consultant will share this directly with the student."""
 
+# ── Chat endpoint ──────────────────────────────────────────────────────────────
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(profile: StudentProfile, db: Session = Depends(get_db)):
-    # Step 1: Filter universities from DB
+    # Step 1: Hard filter
     matched = filter_universities(db, profile)
+
+    # Step 2: Score and rank — top 15 go to Claude
+    matched = rank_universities(matched, profile, top_n=15)
+
+    # Step 3: Build Claude context
     uni_context = universities_to_context(matched)
-
-    # Step 2: Build messages for Claude
     system = SYSTEM_PROMPT + f"\n\n## YOUR PARTNER UNIVERSITIES DATABASE:\n{uni_context}"
-
     messages = profile.history + [{"role": "user", "content": profile.message}]
 
-    # Step 3: Call Claude
+    # Step 4: Call Claude
     try:
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
@@ -206,13 +251,14 @@ async def chat(profile: StudentProfile, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Claude API error: {str(e)}")
 
-    # Step 4: Return response
+    # Step 5: Return
     matched_dicts = [
         {
             "id": u.id,
             "name": u.name,
             "country": u.country,
             "website": u.website,
+            "tuition_usd": u.tuition_usd,
             "tuition_min": u.tuition_min,
             "ielts_min": u.ielts_min,
             "gpa_min": u.gpa_min,
@@ -237,6 +283,7 @@ def list_universities(
         query = query.filter(University.gpa_min <= min_gpa)
     return query.all()
 
+
 @app.get("/stats")
 def stats(db: Session = Depends(get_db)):
     total = db.query(University).count()
@@ -244,3 +291,8 @@ def stats(db: Session = Depends(get_db)):
     failed = db.query(University).filter(University.scrape_status == "failed").count()
     pending = db.query(University).filter(University.scrape_status == "pending").count()
     return {"total": total, "scraped": scraped, "failed": failed, "pending": pending}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
