@@ -21,9 +21,16 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 import anthropic
+import asyncio
 import os
+import sys
 
 from models import University, SessionLocal, get_db
+
+# Make the sibling scraper/ package importable for the /scrape endpoint.
+_SCRAPER_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scraper")
+if _SCRAPER_DIR not in sys.path:
+    sys.path.insert(0, _SCRAPER_DIR)
 
 app = FastAPI(title="AI-Sana API")
 
@@ -55,44 +62,52 @@ class ChatResponse(BaseModel):
 # ── Filtering logic ────────────────────────────────────────────────────────────
 
 def filter_universities(db: Session, profile: "StudentProfile") -> List[University]:
-    """Hard eligibility filter — only universities the student qualifies for."""
-    query = db.query(University)
+    """Hard eligibility filter — only universities the student qualifies for.
 
-    if profile.gpa is not None:
-        query = query.filter(
-            (University.gpa_min == None) | (University.gpa_min <= profile.gpa)
-        )
-
-    if profile.ielts is not None:
-        query = query.filter(
-            (University.ielts_min == None) | (University.ielts_min <= profile.ielts)
-        )
-
-    if profile.toefl is not None:
-        query = query.filter(
-            (University.toefl_min == None) | (University.toefl_min <= profile.toefl)
-        )
-
-    if profile.budget_usd is not None:
-        query = query.filter(
-            or_(
-                University.tuition_usd == None,
-                University.tuition_usd <= profile.budget_usd,
-                University.tuition_min == None,
-                University.tuition_min <= profile.budget_usd,
-            )
-        )
-
+    NULL data fields are treated as eligible: if a university hasn't been scraped
+    yet (tuition/IELTS/TOEFL/GPA are NULL), it still passes academic + budget
+    filters. Country preference is preserved even in the relaxed fallback.
+    """
+    # Country lives in the base query so the fallback can reuse it.
+    base = db.query(University)
     if profile.preferred_countries:
         countries_lower = [c.strip().lower() for c in profile.preferred_countries]
         country_filters = [University.country.ilike(f"%{c}%") for c in countries_lower]
-        query = query.filter(or_(*country_filters))
+        base = base.filter(or_(*country_filters))
 
-    results = query.limit(93).all()
+    query = base
 
-    # Fallback: if too few results relax all filters
+    if profile.gpa is not None:
+        query = query.filter(or_(
+            University.gpa_min.is_(None),
+            University.gpa_min <= profile.gpa,
+        ))
+
+    if profile.ielts is not None:
+        query = query.filter(or_(
+            University.ielts_min.is_(None),
+            University.ielts_min <= profile.ielts,
+        ))
+
+    if profile.toefl is not None:
+        query = query.filter(or_(
+            University.toefl_min.is_(None),
+            University.toefl_min <= profile.toefl,
+        ))
+
+    if profile.budget_usd is not None:
+        query = query.filter(or_(
+            University.tuition_usd.is_(None),
+            University.tuition_usd <= profile.budget_usd,
+            University.tuition_min.is_(None),
+            University.tuition_min <= profile.budget_usd,
+        ))
+
+    results = query.all()
+
+    # Fallback: too few hits — drop the academic/budget filters but keep country.
     if len(results) < 5:
-        results = db.query(University).all()
+        results = base.all()
 
     return results
 
@@ -296,3 +311,51 @@ def stats(db: Session = Depends(get_db)):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+# ── Scrape trigger ─────────────────────────────────────────────────────────────
+
+_scrape_task: Optional[asyncio.Task] = None
+
+
+@app.post("/scrape")
+async def trigger_scrape(
+    refresh_all: bool = False,
+    stale_only: bool = False,
+    concurrency: int = 5,
+):
+    """Kick off a background scrape of pending universities.
+
+    Returns immediately. Progress is printed to the server logs.
+
+    Query params:
+      refresh_all=true  → re-scrape every university
+      stale_only=true   → re-scrape rows past their re_scrape_after date
+      concurrency=N     → number of concurrent workers (default 5)
+    """
+    global _scrape_task
+
+    if _scrape_task and not _scrape_task.done():
+        return {"status": "already_running"}
+
+    from scraper import run_scraper  # imports scraper/scraper.py
+
+    _scrape_task = asyncio.create_task(run_scraper(
+        refresh_all=refresh_all,
+        stale_only=stale_only,
+        concurrency=concurrency,
+    ))
+
+    return {
+        "status": "started",
+        "refresh_all": refresh_all,
+        "stale_only": stale_only,
+        "concurrency": concurrency,
+    }
+
+
+@app.get("/scrape/status")
+def scrape_status():
+    """Check whether a background scrape is currently running."""
+    running = bool(_scrape_task and not _scrape_task.done())
+    return {"running": running}
