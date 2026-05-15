@@ -152,7 +152,7 @@ def score_university(uni: University, profile: "StudentProfile") -> float:
     return score
 
 
-def rank_universities(unis: List[University], profile: "StudentProfile", top_n: int = 15) -> List[University]:
+def rank_universities(unis: List[University], profile: "StudentProfile", top_n: int = 25) -> List[University]:
     scored = [(u, score_university(u, profile)) for u in unis]
     scored.sort(key=lambda x: x[1], reverse=True)
     return [u for u, _ in scored[:top_n]]
