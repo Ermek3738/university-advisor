@@ -1,0 +1,312 @@
+name,country,city,website,programs,tuition_min,tuition_max,tuition_currency,notes
+City University London (INTO),UK,London,https://www.city.ac.uk,,24140,24195,GBP,Provider: INTO. Also available via Kaplan (alternate).
+University of Exeter (INTO),UK,Exeter,https://www.exeter.ac.uk,,17620,17715,GBP,Provider: INTO. Foundation and Year 1 only. No direct entry.
+University of Manchester (INTO),UK,Manchester,https://www.manchester.ac.uk,,22095,22190,GBP,Provider: INTO.
+Anglia Ruskin University (Navitas),UK,Cambridge,https://www.aru.ac.uk,,16000,,GBP,Provider: Navitas. Note: past issues with accommodation.
+University of Portsmouth (Navitas),UK,Portsmouth,https://www.port.ac.uk,,15750,,GBP,Provider: Navitas. Price is per 2 semesters.
+Brunel University London (Navitas),UK,London,https://www.brunel.ac.uk,,17950,,GBP,Provider: Navitas. Price is per 2 semesters.
+Oxford Brookes University (QA),UK,Oxford,https://www.brookes.ac.uk,,17250,18250,GBP,Provider: QA Higher Education. Possible discount of £3000 on Foundation.
+Solent University (QA),UK,Southampton,https://www.solent.ac.uk,,17250,18250,GBP,Provider: QA Higher Education. Possible discount of £3000 on Foundation.
+Royal Holloway (Study Group),UK,London,https://www.royalholloway.ac.uk,,21310,,GBP,Provider: Study Group.
+University of Sheffield (Study Group),UK,Sheffield,https://www.sheffield.ac.uk,,21310,,GBP,Provider: Study Group.
+Durham University (Study Group),UK,Durham,https://www.durham.ac.uk,,21310,,GBP,Provider: Study Group.
+University of Westminster (Kaplan),UK,London,https://www.westminster.ac.uk,,22760,25530,GBP,Provider: Kaplan. Foundation / Year 1 / Pre-Masters available.
+Queen Mary University of London (Kaplan),UK,London,https://www.qmul.ac.uk,,22760,25530,GBP,Provider: Kaplan.
+MPW College,UK,London,https://www.mpw.ac.uk,,38750,40600,GBP,School program. GCSE and A-Level available.
+David Game College,UK,London,https://www.davidgame.ac.uk,,23650,37500,GBP,School program.
+English Path,UK,London,https://www.englishpath.com,,1120,1280,GBP,Language courses. 4-week program. Homestay from £190/week.
+Florida International University (Shorelight),USA,Miami,https://www.fiu.edu,,21012,,USD,Provider: Shorelight. Discounts up to $10000 available.
+Westcliff University,USA,California,https://www.westcliff.edu,,18408,,USD,Direct admissions.
+UE University of Europe,Germany,Berlin,https://www.ue-germany.com,,13000,,EUR,Discounts up to 50% depending on GPA.
+University of Debrecen,Hungary,Debrecen,https://www.unideb.hu,,8000,,EUR,Scholarship up to 90% (UD Scholarship). Medical program priced separately.
+OCA Prague,Czech Republic,Prague,https://www.oca.cz,,5500,,EUR,
+OnCampus Foundation (Netherlands),Netherlands,Various,https://www.oncampus.de,,22440,30460,GBP,2-semester or 3-semester foundation programs.
+The Hague University of Applied Sciences (Navitas),Netherlands,The Hague,https://www.thehagueuniversity.com,,14950,,EUR,Provider: Navitas.
+Wittenborg University,Netherlands,Apeldoorn,https://www.wittenborg.eu,,11800,,EUR,
+HULT International Business School,Global,Various,https://www.hult.edu,,25800,38900,GBP,Campuses in San Francisco / Boston / London / Dubai.
+University of Applied Sciences UE Dubai,UAE,Dubai,https://www.ue-germany.com,,13000,,EUR,Discounts up to 50% depending on GPA.
+Asia Pacific University (APU),Malaysia,Kuala Lumpur,https://www.apu.edu.my,,8000,9000,USD,Foundation from $8000. Bachelor's $8500-$9000.
+Solbridge International School of Business,South Korea,Daejeon,https://www.solbridge.ac.kr,,10000,,USD,Discounts based on interview / English / GPA.
+Tokyo International University,Japan,Tokyo,https://www.tiu.ac.jp,,10000,,USD,
+Navitas Universities Australia,Australia,Various,https://www.navitas.com,,30000,,AUD,Provider: Navitas. Multiple campuses.
+PIHMS Pacific International Hotel Management School,New Zealand,New Plymouth,https://www.pihms.ac.nz,,20000,,USD,
+Cardiff University (INTO),UK,Cardiff,https://www.cardiff.ac.uk,,,,GBP,Provider: INTO.
+Glasgow Caledonian University (INTO),UK,Glasgow,https://www.gcu.ac.uk,,,,GBP,Provider: INTO.
+Hofstra University (INTO),USA,Hempstead,https://www.hofstra.edu,,,,USD,Provider: INTO.
+Illinois State University (INTO),USA,Normal,https://illinoisstate.edu,,,,USD,Provider: INTO.
+Lancaster University (INTO),UK,Lancaster,https://www.lancaster.ac.uk,,,,GBP,Provider: INTO.
+Newcastle University (INTO),UK,Newcastle,https://www.ncl.ac.uk,,,,GBP,Provider: INTO.
+Queen's University Belfast (INTO),UK,Belfast,https://www.qub.ac.uk,,,,GBP,Provider: INTO.
+Rensselaer Polytechnic Institute (INTO),USA,Troy,https://www.rpi.edu,,,,USD,Provider: INTO.
+Saint Louis University (INTO),USA,St. Louis,https://www.slu.edu,,,,USD,Provider: INTO.
+Texas State University (INTO),USA,San Marcos,https://www.txst.edu,,,,USD,Provider: INTO.
+University of Alabama at Birmingham (INTO),USA,Birmingham,https://www.uab.edu,,,,USD,Provider: INTO.
+University of Arizona (INTO),USA,Tucson,https://www.arizona.edu,,,,USD,Provider: INTO.
+University of East Anglia (INTO),UK,Norwich,https://www.uea.ac.uk,,,,GBP,Provider: INTO.
+University of Gloucestershire (INTO),UK,Cheltenham,https://www.glos.ac.uk,,,,GBP,Provider: INTO.
+University of Massachusetts Amherst (INTO),USA,Amherst,https://www.umass.edu,,,,USD,Provider: INTO.
+University of Sheffield (INTO),UK,Sheffield,https://www.sheffield.ac.uk,,,,GBP,Provider: INTO.
+University of South Florida (INTO),USA,Tampa,https://www.usf.edu,,,,USD,Provider: INTO.
+University of Stirling (INTO),UK,Stirling,https://www.stir.ac.uk,,,,GBP,Provider: INTO.
+University of Western Australia (INTO),Australia,Perth,https://www.uwa.edu.au,,,,AUD,Provider: INTO. Via UWA College.
+Avila University (InUni),USA,Kansas City,https://www.avila.edu,,,,USD,Provider: InUni (GUS).
+Canterbury Christ Church University (InUni),UK,Canterbury,https://www.canterbury.ac.uk,,,,GBP,Provider: InUni (GUS).
+Concordia University Chicago (InUni),USA,River Forest,https://www.cuchicago.edu,,,,USD,Provider: InUni (GUS).
+Hartpury University (InUni),UK,Gloucester,https://www.hartpury.ac.uk,,,,GBP,Provider: InUni (GUS).
+Herzing University (InUni),USA,Milwaukee,https://www.herzing.edu,,,,USD,Provider: InUni (GUS).
+LIM College (InUni),USA,New York City,https://www.limcollege.edu,,,,USD,Provider: InUni (GUS). Fashion and lifestyle business college.
+Penn State Dickinson Law (InUni),USA,Carlisle,https://dickinsonlaw.psu.edu,,,,USD,Provider: InUni (GUS).
+Rensselaer Polytechnic Institute (InUni),USA,Troy,https://www.rpi.edu,,,,USD,Provider: InUni (GUS).
+ASU London (Kaplan),UK,London,https://www.kaplanpathways.com/where-to-study/uk-universities/asu-london/,,,,GBP,Provider: Kaplan. Arizona State University London campus.
+Adelaide University (Kaplan),Australia,Adelaide,https://www.adelaide.edu.au,,,,AUD,Provider: Kaplan.
+Bournemouth University (Kaplan),UK,Bournemouth,https://www.bournemouth.ac.uk,,,,GBP,Provider: Kaplan.
+City St George's University of London (Kaplan),UK,London,https://www.city.ac.uk,,,,GBP,Provider: Kaplan. Note: distinct from City University London (INTO).
+Cranfield University (Kaplan),UK,Cranfield,https://www.cranfield.ac.uk,,,,GBP,Provider: Kaplan.
+Massey University (Kaplan),New Zealand,Palmerston North,https://www.massey.ac.nz,,,,NZD,Provider: Kaplan.
+Murdoch University (Kaplan),Australia,Perth,https://www.murdoch.edu.au,,,,AUD,Provider: Kaplan.
+Nottingham Trent University (Kaplan),UK,Nottingham,https://www.ntu.ac.uk,,,,GBP,Provider: Kaplan.
+UWE Bristol (Kaplan),UK,Bristol,https://www.uwe.ac.uk,,,,GBP,Provider: Kaplan.
+University of Alberta (Kaplan),Canada,Edmonton,https://ualberta.ca,,,,CAD,Provider: Kaplan.
+University of Birmingham (Kaplan),UK,Birmingham,https://www.birmingham.ac.uk,,,,GBP,Provider: Kaplan.
+University of Brighton (Kaplan),UK,Brighton,https://www.brighton.ac.uk,,,,GBP,Provider: Kaplan.
+University of Bristol (Kaplan),UK,Bristol,https://www.bristol.ac.uk,,,,GBP,Provider: Kaplan.
+University of Connecticut (Kaplan),USA,Storrs,https://uconn.edu,,,,USD,Provider: Kaplan.
+University of Essex (Kaplan),UK,Colchester,https://www.essex.ac.uk,,,,GBP,Provider: Kaplan.
+University of Glasgow (Kaplan),UK,Glasgow,https://www.gla.ac.uk,,,,GBP,Provider: Kaplan.
+University of Liverpool (Kaplan),UK,Liverpool,https://www.liverpool.ac.uk,,,,GBP,Provider: Kaplan.
+University of Newcastle Australia (Kaplan),Australia,Newcastle,https://www.newcastle.edu.au,,,,AUD,Provider: Kaplan.
+University of Nottingham (Kaplan),UK,Nottingham,https://www.nottingham.ac.uk,,,,GBP,Provider: Kaplan.
+University of Oregon (Kaplan),USA,Eugene,https://uoregon.edu,,,,USD,Provider: Kaplan.
+University of Victoria (Kaplan),Canada,Victoria,https://uvic.ca,,,,CAD,Provider: Kaplan.
+University of York (Kaplan),UK,York,https://www.york.ac.uk,,,,GBP,Provider: Kaplan.
+Birmingham City University (Navitas),UK,Birmingham,https://www.bcuic.navitas.com,,,,GBP,Provider: Navitas. Via Birmingham City University International College (BCUIC).
+Charles Sturt University (Navitas),Australia,Sydney,https://sydneymelbourne.csu.edu.au,,,,AUD,Provider: Navitas. Via Charles Sturt University Sydney and Melbourne.
+Curtin University (Navitas),Australia,Perth,https://www.curtincollege.edu.au,,,,AUD,Provider: Navitas. Via Curtin College.
+Deakin University (Navitas),Australia,Melbourne,https://www.deakincollege.edu.au,,,,AUD,Provider: Navitas. Via Deakin College.
+Edith Cowan University (Navitas),Australia,Perth,https://www.edithcowancollege.edu.au,,,,AUD,Provider: Navitas. Via Edith Cowan College.
+Eynesbury College - Adelaide University (Navitas),Australia,Adelaide,https://www.eynesbury.edu.au,,,,AUD,Provider: Navitas. Via Eynesbury College.
+Griffith University (Navitas),Australia,Brisbane,https://www.griffithcollege.edu.au,,,,AUD,Provider: Navitas. Via Griffith College.
+Keele University (Navitas),UK,Keele,https://kuic.keele.ac.uk,,,,GBP,Provider: Navitas. Via Keele University International College.
+La Trobe University (Navitas),Australia,Melbourne,https://www.latrobecollegeaustralia.edu.au,,,,AUD,Provider: Navitas. Via La Trobe College Australia.
+Lancaster University Leipzig (Navitas),Germany,Leipzig,https://www.lancasterleipzig.de,,,,EUR,Provider: Navitas.
+Manchester Metropolitan University (Navitas),UK,Manchester,https://www.mmu.ac.uk/international/college,,,,GBP,Provider: Navitas. Via Manchester Metropolitan University International College.
+Murdoch University Dubai (Navitas),UAE,Dubai,https://www.murdochuniversitydubai.com,,,,AED,Provider: Navitas.
+Robert Gordon University (Navitas),UK,Aberdeen,https://icrgu.navitas.com,,,,GBP,Provider: Navitas. Via International College Robert Gordon University.
+Simon Fraser University (Navitas),Canada,Burnaby,https://www.fraseric.ca,,,,CAD,Provider: Navitas. Via Fraser International College.
+Swansea University (Navitas),UK,Swansea,https://www.swansea.ac.uk/the-college,,,,GBP,"Provider: Navitas. Via The College, Swansea University."
+Toronto Metropolitan University (Navitas),Canada,Toronto,https://www.torontomuic.ca,,,,CAD,Provider: Navitas. Via Toronto Metropolitan University International College.
+University of Canberra (Navitas),Australia,Canberra,https://www.canberra.edu.au/uc-college,,,,AUD,Provider: Navitas. Via UC College.
+University of Canterbury (Navitas),New Zealand,Christchurch,https://www.ucic.ac.nz,,,,NZD,Provider: Navitas. Via UC International College.
+University of Hertfordshire (Navitas),UK,Hatfield,https://www.hic.navitas.com,,,,GBP,Provider: Navitas. Via Hertfordshire International College.
+University of Lethbridge (Navitas),Canada,Calgary,https://www.uicc.ca,,,,CAD,Provider: Navitas. Via ULethbridge International College Calgary.
+University of Manitoba (Navitas),Canada,Winnipeg,https://www.icmanitoba.ca,,,,CAD,Provider: Navitas. Via International College of Manitoba.
+University of Plymouth (Navitas),UK,Plymouth,https://www.upic.navitas.com,,,,GBP,Provider: Navitas. Via University of Plymouth International College.
+University of Sydney (Navitas),Australia,Sydney,https://www.taylorssydney.edu.au,,,,AUD,Provider: Navitas. Via Taylors College Sydney.
+University of Twente (Navitas),Netherlands,Enschede,https://www.twentepathway.nl,,,,EUR,Provider: Navitas. Via Twente Pathway College.
+University of Waikato (Navitas),New Zealand,Hamilton,https://pathways.waikato.ac.nz,,,,NZD,Provider: Navitas.
+Western Sydney University (Navitas),Australia,Parramatta,https://internationalcollege.westernsydney.edu.au,,,,AUD,Provider: Navitas. Via Western Sydney University International College.
+Western University (Navitas),Canada,"London, Ontario",https://www.westernic.ca,,,,CAD,Provider: Navitas. Via Western International College.
+Wilfrid Laurier University (Navitas),Canada,Waterloo,https://www.laurieric.ca,,,,CAD,Provider: Navitas. Via Wilfrid Laurier International College.
+BPP University (Oxford International),UK,London,https://www.bpp.com,,,,GBP,Provider: Oxford International.
+Bangor University (Oxford International),UK,Bangor,https://www.bangor.ac.uk,,,,GBP,Provider: Oxford International.
+Coquitlam College (Oxford International),Canada,Vancouver,https://www.coquitlamcollege.com,,,,CAD,Provider: Oxford International.
+De Montfort University (Oxford International),UK,Leicester,https://www.dmu.ac.uk,,,,GBP,Provider: Oxford International.
+Edinburgh Napier University (Oxford International),UK,Edinburgh,https://www.napier.ac.uk,,,,GBP,Provider: Oxford International.
+Sheffield Hallam University (Oxford International),UK,Sheffield,https://www.shu.ac.uk,,,,GBP,Provider: Oxford International.
+University of Dundee (Oxford International),UK,Dundee,https://www.dundee.ac.uk,,,,GBP,Provider: Oxford International.
+University of Greenwich (Oxford International),UK,London,https://www.gre.ac.uk,,,,GBP,Provider: Oxford International.
+University of Kent (Oxford International),UK,Canterbury,https://www.kent.ac.uk,,,,GBP,Provider: Oxford International.
+University of Louisville (Oxford International),USA,Louisville,https://www.louisville.edu,,,,USD,Provider: Oxford International.
+University of Notre Dame Australia (Oxford International),Australia,Perth,https://www.nd.edu.au,,,,AUD,Provider: Oxford International.
+University of Roehampton (Oxford International),UK,London,https://www.roehampton.ac.uk,,,,GBP,Provider: Oxford International.
+Whitecliffe University - Berlin International (Oxford International),Germany,Berlin,https://www.berlininternational.de,,,,EUR,Provider: Oxford International. Via Oxford Direct partner network.
+London Metropolitan University (QA),UK,London,https://qahighereducation.com/partner-institutions/london-metropolitan-university/,,,,GBP,Provider: QA Higher Education.
+Northumbria University (QA),UK,London,https://qahighereducation.com/partner-institutions/northumbria-university/,,,,GBP,Provider: QA Higher Education.
+Swansea University (QA),UK,London,https://qahighereducation.com/partner-institutions/swansea-university/,,,,GBP,Provider: QA Higher Education.
+Ulster University (QA),UK,London,https://qahighereducation.com/partner-institutions/ulster-university/,,,,GBP,Provider: QA Higher Education.
+AMDA College of the Performing Arts (Shorelight),USA,New York/Los Angeles,https://www.amda.edu,,,,USD,Provider: Shorelight.
+Adelphi University (Shorelight),USA,Garden City,https://www.adelphi.edu,,,,USD,Provider: Shorelight.
+American Collegiate DC (Shorelight),USA,Washington DC,https://shorelight.com/universities/undergraduate/american-collegiate-washington-dc,,,,USD,Provider: Shorelight.
+American Collegiate LA (Shorelight),USA,Los Angeles,https://shorelight.com/universities/undergraduate/american-collegiate-los-angeles,,,,USD,Provider: Shorelight.
+American Collegiate Live (Shorelight),USA,Online,https://shorelight.com/universities/undergraduate/american-collegiate-live,,,,USD,Provider: Shorelight. Digital learning.
+Auburn University (Shorelight),USA,Auburn,https://www.auburn.edu,,,,USD,Provider: Shorelight.
+Auburn University at Montgomery (Shorelight),USA,Montgomery,https://www.aum.edu,,,,USD,Provider: Shorelight.
+Bellarmine University (Shorelight),USA,Louisville,https://www.bellarmine.edu,,,,USD,Provider: Shorelight.
+Belmont University (Shorelight),USA,Nashville,https://www.belmont.edu,,,,USD,Provider: Shorelight.
+Bridgewater College (Shorelight),USA,Bridgewater,https://www.bridgewater.edu,,,,USD,Provider: Shorelight.
+Carroll University (Shorelight),USA,Waukesha,https://www.carrollu.edu,,,,USD,Provider: Shorelight.
+Central Methodist University (Shorelight),USA,Fayette,https://www.centralmethodist.edu,,,,USD,Provider: Shorelight.
+Cleveland State University (Shorelight),USA,Cleveland,https://www.csuohio.edu,,,,USD,Provider: Shorelight.
+Colby Sawyer College (Shorelight),USA,New London,https://www.colby-sawyer.edu,,,,USD,Provider: Shorelight.
+Corpus Christi and St. Mark's College (Shorelight),Canada,Vancouver,https://www.corpuschristist-marks.ca,,,,CAD,Provider: Shorelight.
+Dakota Wesleyan University (Shorelight),USA,Mitchell,https://www.dwu.edu,,,,USD,Provider: Shorelight.
+Dean College (Shorelight),USA,Franklin,https://www.dean.edu,,,,USD,Provider: Shorelight.
+Eureka College (Shorelight),USA,Eureka,https://www.eureka.edu,,,,USD,Provider: Shorelight.
+Fairfield University (Shorelight),USA,Fairfield,https://www.fairfield.edu,,,,USD,Provider: Shorelight.
+Felician University (Shorelight),USA,Rutherford,https://www.felician.edu,,,,USD,Provider: Shorelight.
+Gonzaga University (Shorelight),USA,Spokane,https://www.gonzaga.edu,,,,USD,Provider: Shorelight.
+Hanover College (Shorelight),USA,Hanover,https://www.hanover.edu,,,,USD,Provider: Shorelight.
+Hartwick College (Shorelight),USA,Oneonta,https://www.hartwick.edu,,,,USD,Provider: Shorelight.
+Heriot-Watt University Dubai (Shorelight),UAE,Dubai,https://www.hw.ac.uk/dubai,,,,AED,Provider: Shorelight.
+Heriot-Watt University Malaysia (Shorelight),Malaysia,Putrajaya,https://www.hw.ac.uk/malaysia,,,,MYR,Provider: Shorelight.
+Heriot-Watt University UK (Shorelight),UK,Edinburgh,https://www.hw.ac.uk,,,,GBP,Provider: Shorelight.
+Hiram College (Shorelight),USA,Hiram,https://www.hiram.edu,,,,USD,Provider: Shorelight.
+Holy Cross College (Shorelight),USA,Notre Dame,https://www.hcc-nd.edu,,,,USD,Provider: Shorelight.
+Illinois Wesleyan University (Shorelight),USA,Bloomington,https://www.iwu.edu,,,,USD,Provider: Shorelight.
+Johns Hopkins University (Shorelight),USA,Baltimore,https://www.jhu.edu,,,,USD,Provider: Shorelight. Graduate programs.
+Lakeland University (Shorelight),USA,Sheboygan,https://www.lakeland.edu,,,,USD,Provider: Shorelight.
+Lewis University (Shorelight),USA,Romeoville,https://www.lewisu.edu,,,,USD,Provider: Shorelight.
+Lynn University (Shorelight),USA,Boca Raton,https://www.lynn.edu,,,,USD,Provider: Shorelight.
+MGH Institute of Health Professions (Shorelight),USA,Boston,https://www.mghihp.edu,,,,USD,Provider: Shorelight.
+McMurry University (Shorelight),USA,Abilene,https://www.mcm.edu,,,,USD,Provider: Shorelight.
+Missouri University of Science and Technology (Shorelight),USA,Rolla,https://www.mst.edu,,,,USD,Provider: Shorelight.
+Montana State University (Shorelight),USA,Bozeman,https://www.montana.edu,,,,USD,Provider: Shorelight.
+Moravian University (Shorelight),USA,Bethlehem,https://www.moravian.edu,,,,USD,Provider: Shorelight.
+Mount St. Mary's University Maryland (Shorelight),USA,Emmitsburg,https://msmary.edu,,,,USD,Provider: Shorelight.
+Ohio Wesleyan University (Shorelight),USA,Delaware,https://www.owu.edu,,,,USD,Provider: Shorelight.
+Oklahoma City University (Shorelight),USA,Oklahoma City,https://www.okcu.edu,,,,USD,Provider: Shorelight.
+Palm Beach Atlantic University (Shorelight),USA,West Palm Beach,https://www.pba.edu,,,,USD,Provider: Shorelight.
+Pepperdine University (Shorelight),USA,Malibu,https://www.pepperdine.edu,,,,USD,Provider: Shorelight. Graduate programs.
+Randolph College (Shorelight),USA,Lynchburg,https://www.randolphcollege.edu,,,,USD,Provider: Shorelight.
+Robert Morris University (Shorelight),USA,Moon Township,https://www.rmu.edu,,,,USD,Provider: Shorelight.
+Rutgers University Camden (Shorelight),USA,Camden,https://www.camden.rutgers.edu,,,,USD,Provider: Shorelight.
+Rutgers University New Brunswick (Shorelight),USA,New Brunswick,https://www.rutgers.edu,,,,USD,Provider: Shorelight.
+Saint Mary's University of Minnesota (Shorelight),USA,Winona,https://www.smumn.edu,,,,USD,Provider: Shorelight.
+Salve Regina University (Shorelight),USA,Newport,https://www.salve.edu,,,,USD,Provider: Shorelight.
+Schreiner University (Shorelight),USA,Kerrville,https://www.schreiner.edu,,,,USD,Provider: Shorelight.
+Seattle University (Shorelight),USA,Seattle,https://www.seattleu.edu,,,,USD,Provider: Shorelight.
+St. Bonaventure University (Shorelight),USA,Allegany,https://www.sbu.edu,,,,USD,Provider: Shorelight.
+St. Catherine University (Shorelight),USA,St. Paul,https://www.stkate.edu,,,,USD,Provider: Shorelight.
+St. Mary's College of California (Shorelight),USA,Moraga,https://www.stmarys-ca.edu,,,,USD,Provider: Shorelight.
+St. Thomas Aquinas College (Shorelight),USA,Sparkill,https://www.stac.edu,,,,USD,Provider: Shorelight.
+Stony Brook University (Shorelight),USA,Stony Brook,https://www.stonybrook.edu,,,,USD,Provider: Shorelight.
+The New School (Shorelight),USA,New York City,https://www.newschool.edu,,,,USD,Provider: Shorelight.
+Trinity Christian College (Shorelight),USA,Palos Heights,https://www.trnty.edu,,,,USD,Provider: Shorelight.
+Tulane University (Shorelight),USA,New Orleans,https://www.tulane.edu,,,,USD,Provider: Shorelight. Graduate programs.
+University at Buffalo (Shorelight),USA,Buffalo,https://www.buffalo.edu,,,,USD,Provider: Shorelight.
+University of Alaska Fairbanks (Shorelight),USA,Fairbanks,https://www.uaf.edu,,,,USD,Provider: Shorelight.
+University of California Berkeley - Summer (Shorelight),USA,Berkeley,https://www.berkeley.edu,,,,USD,Provider: Shorelight. Summer programs only.
+University of Central Florida (Shorelight),USA,Orlando,https://www.ucf.edu,,,,USD,Provider: Shorelight.
+University of Charleston (Shorelight),USA,Charleston,https://www.ucwv.edu,,,,USD,Provider: Shorelight.
+University of Dayton (Shorelight),USA,Dayton,https://www.udayton.edu,,,,USD,Provider: Shorelight.
+University of Dubuque (Shorelight),USA,Dubuque,https://www.dbq.edu,,,,USD,Provider: Shorelight.
+University of Illinois Springfield (Shorelight),USA,Springfield,https://www.uis.edu,,,,USD,Provider: Shorelight.
+University of Kansas (Shorelight),USA,Lawrence,https://www.ku.edu,,,,USD,Provider: Shorelight.
+University of Massachusetts Boston (Shorelight),USA,Boston,https://www.umb.edu,,,,USD,Provider: Shorelight.
+University of Mount Union (Shorelight),USA,Alliance,https://www.mountunion.edu,,,,USD,Provider: Shorelight.
+University of Nevada Reno (Shorelight),USA,Reno,https://www.unr.edu,,,,USD,Provider: Shorelight.
+University of New England USA (Shorelight),USA,Portland,https://www.une.edu,,,,USD,Provider: Shorelight.
+University of Portland (Shorelight),USA,Portland,https://www.up.edu,,,,USD,Provider: Shorelight.
+University of Redlands (Shorelight),USA,Redlands,https://www.redlands.edu,,,,USD,Provider: Shorelight.
+University of Saint Mary Kansas (Shorelight),USA,Leavenworth,https://www.stmary.edu,,,,USD,Provider: Shorelight.
+University of South Carolina (Shorelight),USA,Columbia,https://www.sc.edu,,,,USD,Provider: Shorelight.
+University of Texas at San Antonio (Shorelight),USA,San Antonio,https://www.utsa.edu,,,,USD,Provider: Shorelight.
+University of Utah (Shorelight),USA,Salt Lake City,https://www.utah.edu,,,,USD,Provider: Shorelight.
+University of Virginia (Shorelight),USA,Charlottesville,https://www.virginia.edu,,,,USD,Provider: Shorelight. Graduate programs.
+University of Wisconsin Eau Claire (Shorelight),USA,Eau Claire,https://www.uwec.edu,,,,USD,Provider: Shorelight.
+University of Wisconsin Green Bay (Shorelight),USA,Green Bay,https://www.uwgb.edu,,,,USD,Provider: Shorelight.
+University of Wisconsin River Falls (Shorelight),USA,River Falls,https://www.uwrf.edu,,,,USD,Provider: Shorelight.
+University of Wisconsin Stevens Point (Shorelight),USA,Stevens Point,https://www.uwsp.edu,,,,USD,Provider: Shorelight.
+University of Wisconsin Superior (Shorelight),USA,Superior,https://www.uwsuper.edu,,,,USD,Provider: Shorelight.
+University of Wisconsin Whitewater (Shorelight),USA,Whitewater,https://www.uww.edu,,,,USD,Provider: Shorelight.
+University of Wyoming (Shorelight),USA,Laramie,https://www.uwyo.edu,,,,USD,Provider: Shorelight.
+University of the Pacific (Shorelight),USA,Stockton,https://www.pacific.edu,,,,USD,Provider: Shorelight.
+Utah Tech University (Shorelight),USA,St. George,https://utahtech.edu,,,,USD,Provider: Shorelight.
+Villanova University (Shorelight),USA,Villanova,https://www.villanova.edu,,,,USD,Provider: Shorelight. Graduate programs.
+Virginia Wesleyan University (Shorelight),USA,Virginia Beach,https://www.vwu.edu,,,,USD,Provider: Shorelight.
+Washington & Jefferson College (Shorelight),USA,Washington,https://www.washjeff.edu,,,,USD,Provider: Shorelight.
+Western Oregon University (Shorelight),USA,Monmouth,https://www.wou.edu,,,,USD,Provider: Shorelight.
+Whittier College (Shorelight),USA,Whittier,https://www.whittier.edu,,,,USD,Provider: Shorelight.
+Widener University (Shorelight),USA,Chester,https://www.widener.edu,,,,USD,Provider: Shorelight.
+Wilson College (Shorelight),USA,Chambersburg,https://www.wilson.edu,,,,USD,Provider: Shorelight.
+California State University San Marcos (Study Group),USA,San Marcos,https://www.csusm.edu,,,,USD,Provider: Study Group. Direct entry.
+Cardiff University (Study Group),UK,Cardiff,https://isc.cardiff.ac.uk,,,,GBP,Provider: Study Group.
+DePaul University (Study Group),USA,Chicago,https://www.depaul.edu,,,,USD,Provider: Study Group. Direct entry.
+Florida Atlantic University (Study Group),USA,Boca Raton,https://www.fau.edu,,,,USD,Provider: Study Group. Direct entry.
+James Madison University (Study Group),USA,Harrisonburg,https://www.jmu.edu,,,,USD,Provider: Study Group. Direct entry.
+Kingston University (Study Group),UK,Kingston upon Thames,https://www.kingstonisc.com,,,,GBP,Provider: Study Group.
+Leeds Beckett University (Study Group),UK,Leeds,https://isc.leedsbeckett.ac.uk,,,,GBP,Provider: Study Group.
+Liverpool John Moores University (Study Group),UK,Liverpool,https://www.ljmuisc.com,,,,GBP,Provider: Study Group.
+Long Island University (Study Group),USA,Brooklyn,https://liu.edu,,,,USD,Provider: Study Group. Direct entry.
+Mercer University (Study Group),USA,Macon,https://www.mercer.edu,,,,USD,Provider: Study Group. Direct entry.
+New Jersey Institute of Technology (Study Group),USA,Newark,https://www.njit.edu,,,,USD,Provider: Study Group. Direct entry.
+Texas A&M University Corpus Christi (Study Group),USA,Corpus Christi,https://www.tamucc.edu,,,,USD,Provider: Study Group. Direct entry.
+Towson University (Study Group),USA,Towson,https://www.towson.edu,,,,USD,Provider: Study Group. Direct entry.
+University of Aberdeen (Study Group),UK,Aberdeen,https://www.abdn.ac.uk,,,,GBP,Provider: Study Group.
+University of Hartford (Study Group),USA,West Hartford,https://www.hartford.edu,,,,USD,Provider: Study Group. Direct entry.
+University of Huddersfield (Study Group),UK,Huddersfield,https://www.huddersfieldisc.com,,,,GBP,Provider: Study Group.
+University of Huddersfield London (Study Group),UK,London,https://london.hud.ac.uk,,,,GBP,Provider: Study Group.
+University of Leeds (Study Group),UK,Leeds,https://www.leedsisc.com,,,,GBP,Provider: Study Group.
+University of Strathclyde (Study Group),UK,Glasgow,https://isc.strath.ac.uk,,,,GBP,Provider: Study Group.
+University of Surrey (Study Group),UK,Guildford,https://isc.surrey.ac.uk,,,,GBP,Provider: Study Group.
+University of Sussex (Study Group),UK,Brighton,https://isc.sussex.ac.uk,,,,GBP,Provider: Study Group.
+University of Wisconsin-Stout (Study Group),USA,Menomonie,https://www.uwstout.edu,,,,USD,Provider: Study Group. Direct entry.
+Western Washington University (Study Group),USA,Bellingham,https://www.wwu.edu,,,,USD,Provider: Study Group. Direct entry.
+Charles Darwin University (UP Education),Australia,Darwin,https://www.cdu.edu.au,,,,AUD,Provider: UP Education. Via CDU International College.
+Swinburne University of Technology (UP Education),Australia,Melbourne,https://www.swinburne.edu.au,,,,AUD,Provider: UP Education.
+University of Auckland (UP Education),New Zealand,Auckland,https://www.auckland.ac.nz,,,,NZD,Provider: UP Education. Foundation studies pathway.
+University of Tasmania (UP Education),Australia,Hobart,https://www.utas.edu.au,,,,AUD,Provider: UP Education. Via University of Tasmania International Pathway College.
+Victoria University of Wellington (UP Education),New Zealand,Wellington,https://www.wgtn.ac.nz,,,,NZD,Provider: UP Education. Foundation studies pathway.
+ARUCAD Cyprus,Cyprus,Nicosia,https://www.arucad.edu.tr,,,,,
+American University (Shorelight),USA,Washington DC,https://www.american.edu,,,,Provider: Shorelight.,
+Arizona State University (Kaplan),USA,Arizona,https://www.asu.edu,,,,Provider: Kaplan.,
+Auckland University of Technology (AUT),New Zealand,Auckland,https://www.aut.ac.nz,,,,Also known as IUT.,
+Audencia Business School,France,Nantes,https://www.audencia.com,,,,,
+BAU International University,Turkey,Istanbul,https://www.bau.edu.tr,,,,,
+BHMS Business and Hotel Management School,Switzerland,Lucerne,https://www.bhms.ch,,,,,
+Cascadia College,USA,Bothell,https://www.cascadia.edu,,,,Near Seattle Washington state.,
+Colorado State University (INTO),USA,Colorado,https://www.colostate.edu,,,,Provider: INTO.,
+Curtin University Singapore (Navitas),Singapore,Singapore,https://www.curtin.edu.sg,,,,Provider: Navitas.,
+DVC Diablo Valley College,USA,California,https://www.dvc.edu,,,,3 colleges in California.,
+Douglas College,Canada,Vancouver,https://www.douglascollege.ca,,,,,
+Drew University (INTO),USA,New Jersey,https://www.drew.edu,,,,Provider: INTO.,
+Durham College,Canada,Oshawa,https://www.durhamcollege.ca,,,,,
+EKA University of Applied Sciences,Latvia,Riga,https://www.eka.edu.lv,,,,,
+EU Business School Barcelona,Spain,Barcelona,https://www.euruni.edu,,,,Degree programs available.,
+EU Business School Geneva,Switzerland,Geneva,https://www.euruni.edu,,,,Degree programs available.,
+EU Business School Munich,Germany,Munich,https://www.euruni.edu/en/Campuses/Munich.html,,,,,
+European University of Lefke,Cyprus,Lefke,https://www.eul.edu.tr,,,,,
+Fresenius University,Germany,Various,https://www.hs-fresenius.de,,,,,
+George Brown College,Canada,Toronto,https://www.georgebrown.ca,,,,,
+George Mason University (INTO),USA,Virginia,https://www.gmu.edu,,,,Provider: INTO.,
+Georgian College,Canada,Barrie,https://www.georgiancollege.ca,,,,,
+Heriot-Watt University Dubai,UAE,Dubai,https://www.hw.ac.uk/dubai,,,,,
+Hispania School,Spain,Barcelona,https://www.hispania.org,,,,Language school.,
+IBS Budapest,Hungary,Budapest,https://www.ibs-b.hu,,,,,
+IU International University of Applied Sciences,Germany,Various,https://www.iu.org,,,,Formerly IUBH. Online and on-campus programs.,
+James Cook University Singapore,Singapore,Singapore,https://www.jcu.edu.sg,,,,,
+KUAS Kyoto University of Art and Design,Japan,Kyoto,https://www.kuas.ac.jp,,,,,
+Kedge Business School,France,Bordeaux,https://www.kedge.edu,,,,,
+Lancaster University Germany (Navitas),Germany,Leipzig,https://www.lancaster.ac.uk/germany,,,,Provider: Navitas.,
+Langara College,Canada,Vancouver,https://www.langara.ca,,,,,
+Louisiana State University (Shorelight),USA,Baton Rouge,https://www.lsu.edu,,,,Provider: Shorelight.,
+Macromedia University,Germany,Munich,https://www.macromedia-fachhochschule.de,,,,,
+Mercy College New York (Oxford International),USA,New York,https://www.mercy.edu,,,,Provider: Oxford International.,
+New York Film Academy,USA,New York,https://www.nyfa.edu,,,,Direct admissions.,
+Niagara College,Canada,Niagara,https://www.niagaracollege.ca,,,,,
+Oregon State University (INTO),USA,Oregon,https://oregonstate.edu,,,,Provider: INTO.,
+Pace University (Kaplan),USA,New York,https://www.pace.edu,,,,Provider: Kaplan. Pathway program.,
+Queens College (Navitas),USA,New York,https://www.qc.cuny.edu,,,,Provider: Navitas.,
+SAIT Alberta (Kaplan),Canada,Calgary,https://www.sait.ca,,,,Provider: Kaplan.,
+SRH University,Germany,Heidelberg,https://www.srh-university.com,,,,,
+Saint-Lawrence College,Canada,Kingston,https://www.sl.on.ca,,,,,
+San Francisco State University (Oxford International),USA,San Francisco,https://www.sfsu.edu,,,,Provider: Oxford International Pathway.,
+San Jose City College,USA,San Jose,https://www.sjcc.edu,,,,Near San Francisco.,
+Simmons University (Kaplan),USA,Boston,https://www.simmons.edu,,,,Provider: Kaplan.,
+Suffolk University (INTO),USA,Boston,https://www.suffolk.edu,,,,Provider: INTO.,
+Sunway University,Malaysia,Kuala Lumpur,https://www.sunway.edu.my,,,,,
+Swiss Education Group,Switzerland,Various,https://www.swisseducation.com,,,,,
+TED University,Turkey,Ankara,https://www.tedu.edu.tr,,,,,
+TSI Transport and Telecommunication Institute,Latvia,Riga,https://www.tsi.lv,,,,,
+Texas State University,USA,San Marcos,https://www.txstate.edu,,,,Direct admissions.,
+Thompson Rivers University,Canada,Kamloops,https://www.tru.ca,,,,,
+University of Illinois Chicago (Shorelight),USA,Chicago,https://www.uic.edu,,,,Provider: Shorelight.,
+University of North Florida,USA,Jacksonville,https://www.unf.edu,,,,Direct admissions.,
+University of Windsor,Canada,Windsor,https://www.uwindsor.ca,,,,,
+University of Wollongong Dubai,UAE,Dubai,https://www.uowdubai.ac.ae,,,,,
+Up Education New Zealand,New Zealand,Auckland,https://www.up.education,,,,,
+Valencia College,USA,Orlando,https://www.valenciacollege.edu,,,,,
+Vilnius Gediminas Technical University,Lithuania,Vilnius,https://www.vilniustech.lt,,,,Also known as VILNIUS TECH.,
+Webster University,USA,Missouri,https://www.webster.edu,,,,Direct admissions.,
+Xi'an Jiaotong-Liverpool University,China,Suzhou,https://www.xjtlu.edu.cn,,,,,
+Yasar University,Turkey,Izmir,https://www.yasar.edu.tr,,,,,
