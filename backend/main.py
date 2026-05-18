@@ -61,54 +61,78 @@ class ChatResponse(BaseModel):
 
 # ── Filtering logic ────────────────────────────────────────────────────────────
 
+MIN_RESULTS = 5
+
+
 def filter_universities(db: Session, profile: "StudentProfile") -> List[University]:
     """Hard eligibility filter — only universities the student qualifies for.
 
     NULL data fields are treated as eligible: if a university hasn't been scraped
-    yet (tuition/IELTS/TOEFL/GPA are NULL), it still passes academic + budget
-    filters. Country preference is preserved even in the relaxed fallback.
+    yet, it still passes academic/budget/program filters. Country preference is
+    part of the base query and is never relaxed.
+
+    When fewer than MIN_RESULTS match, filters are dropped one at a time from
+    softest to hardest (programs → budget → language tests → GPA) until either
+    the threshold is met or all optional filters are gone.
     """
-    # Country lives in the base query so the fallback can reuse it.
     base = db.query(University)
     if profile.preferred_countries:
         countries_lower = [c.strip().lower() for c in profile.preferred_countries]
         country_filters = [University.country.ilike(f"%{c}%") for c in countries_lower]
         base = base.filter(or_(*country_filters))
 
-    query = base
+    # Build optional filter clauses in DROP ORDER (softest first — index 0 drops first).
+    clauses = []
 
-    if profile.gpa is not None:
-        query = query.filter(or_(
-            University.gpa_min.is_(None),
-            University.gpa_min <= profile.gpa,
-        ))
-
-    if profile.ielts is not None:
-        query = query.filter(or_(
-            University.ielts_min.is_(None),
-            University.ielts_min <= profile.ielts,
-        ))
-
-    if profile.toefl is not None:
-        query = query.filter(or_(
-            University.toefl_min.is_(None),
-            University.toefl_min <= profile.toefl,
-        ))
+    if profile.preferred_programs:
+        program_filters = [
+            University.programs.ilike(f"%{p.strip()}%")
+            for p in profile.preferred_programs if p.strip()
+        ]
+        if program_filters:
+            clauses.append(("programs", or_(
+                University.programs.is_(None),
+                *program_filters,
+            )))
 
     if profile.budget_usd is not None:
-        query = query.filter(or_(
+        clauses.append(("budget", or_(
             University.tuition_usd.is_(None),
             University.tuition_usd <= profile.budget_usd,
-            University.tuition_min.is_(None),
-            University.tuition_min <= profile.budget_usd,
-        ))
+        )))
 
-    results = query.all()
+    if profile.ielts is not None or profile.toefl is not None:
+        lang_or = []
+        if profile.ielts is not None:
+            lang_or.append(or_(
+                University.ielts_min.is_(None),
+                University.ielts_min <= profile.ielts,
+            ))
+        if profile.toefl is not None:
+            lang_or.append(or_(
+                University.toefl_min.is_(None),
+                University.toefl_min <= profile.toefl,
+            ))
+        # A student satisfying either IELTS or TOEFL is eligible.
+        clauses.append(("language", or_(*lang_or)))
 
-    # Fallback: too few hits — drop the academic/budget filters but keep country.
-    if len(results) < 5:
-        results = base.all()
+    if profile.gpa is not None:
+        clauses.append(("gpa", or_(
+            University.gpa_min.is_(None),
+            University.gpa_min <= profile.gpa,
+        )))
 
+    # Try with all filters, then progressively drop from the front of `clauses`.
+    for drop_count in range(len(clauses) + 1):
+        active = clauses[drop_count:]
+        query = base
+        for _, clause in active:
+            query = query.filter(clause)
+        results = query.all()
+        if len(results) >= MIN_RESULTS:
+            return results
+
+    # Even with only country (or nothing) constraining the pool, return whatever we have.
     return results
 
 
@@ -246,8 +270,8 @@ async def chat(profile: StudentProfile, db: Session = Depends(get_db)):
     # Step 1: Hard filter
     matched = filter_universities(db, profile)
 
-    # Step 2: Score and rank — top 15 go to Claude
-    matched = rank_universities(matched, profile, top_n=15)
+    # Step 2: Score and rank — top 30 go to Claude
+    matched = rank_universities(matched, profile, top_n=30)
 
     # Step 3: Build Claude context
     uni_context = universities_to_context(matched)

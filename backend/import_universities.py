@@ -17,12 +17,16 @@ Usage:
 
 import csv
 import argparse
-from models import University, SessionLocal
+from models import University, SessionLocal, to_usd
 
 REQUIRED = ["name", "website"]
 
 def parse_row(row: dict) -> dict:
     """Extract and type-cast all known fields from a CSV row."""
+    tuition_min = float(row["tuition_min"]) if row.get("tuition_min") else None
+    tuition_max = float(row["tuition_max"]) if row.get("tuition_max") else None
+    tuition_currency = (row.get("tuition_currency") or "USD").upper().strip() or "USD"
+
     return {
         "name":                  row.get("name"),
         "country":               row.get("country", ""),
@@ -33,8 +37,10 @@ def parse_row(row: dict) -> dict:
         "ielts_min":             float(row["ielts_min"]) if row.get("ielts_min") else None,
         "toefl_min":             int(row["toefl_min"])   if row.get("toefl_min") else None,
         "gpa_min":               float(row["gpa_min"])   if row.get("gpa_min")   else None,
-        "tuition_min":           float(row["tuition_min"]) if row.get("tuition_min") else None,
-        "tuition_max":           float(row["tuition_max"]) if row.get("tuition_max") else None,
+        "tuition_min":           tuition_min,
+        "tuition_max":           tuition_max,
+        "tuition_currency":      tuition_currency,
+        "tuition_usd":           to_usd(tuition_min, tuition_currency),
         "intakes":               row.get("intakes", ""),
         "scholarship_available": row.get("scholarship_available", ""),
     }

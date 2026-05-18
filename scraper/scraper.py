@@ -23,11 +23,12 @@ import sys
 import json
 import asyncio
 import argparse
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 
 import httpx
 from anthropic import AsyncAnthropic
+from sqlalchemy import or_
 
 # Make `models` importable whether this file is run from scraper/ or imported
 # from backend/main.py.
@@ -35,7 +36,7 @@ _BACKEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "b
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
-from models import University, SessionLocal  # noqa: E402
+from models import University, SessionLocal, utcnow, to_usd  # noqa: E402
 
 # ── Configuration ──────────────────────────────────────────────────────────────
 
@@ -45,28 +46,15 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 MAX_PAGE_CHARS = 20_000     # plain-text characters sent to Claude per page
 FETCH_TIMEOUT = 30.0        # seconds
 DEFAULT_CONCURRENCY = 5
+MAX_CONCURRENCY = 5         # hard cap on concurrent scrape workers
 PER_TASK_DELAY = 1.0        # polite delay per worker
+RETRY_DELAY = 2.0           # delay before the one retry on failure
+SUCCESS_REFRESH_DAYS = 90
+FAILURE_REFRESH_DAYS = 7
 
 USER_AGENT = (
     "Mozilla/5.0 (compatible; AI-Sana-Scraper/1.0; +https://ai-sana.example)"
 )
-
-# ── Currency normalization ─────────────────────────────────────────────────────
-
-EXCHANGE_RATES = {
-    "USD": 1.00, "GBP": 1.27, "EUR": 1.08, "CAD": 0.74,
-    "AUD": 0.65, "NZD": 0.60, "SGD": 0.74, "JPY": 0.0067,
-    "CHF": 1.13, "SEK": 0.095, "NOK": 0.093, "DKK": 0.145,
-}
-
-def to_usd(amount, currency: str) -> Optional[float]:
-    if amount is None:
-        return None
-    rate = EXCHANGE_RATES.get((currency or "USD").upper().strip(), 1.0)
-    try:
-        return round(float(amount) * rate, 2)
-    except (TypeError, ValueError):
-        return None
 
 # ── HTML → text ────────────────────────────────────────────────────────────────
 
@@ -165,9 +153,26 @@ async def scrape_university(http: httpx.AsyncClient, api: AsyncAnthropic, uni: U
         return {}
     return await extract_with_claude(api, text, uni.name or "")
 
+
+def _has_useful_data(data: dict) -> bool:
+    """A scrape counts as successful only if Claude returned at least one non-null field.
+    An all-null dict means the page didn't actually contain admissions info."""
+    return bool(data) and any(v is not None for v in data.values())
+
+
+async def scrape_with_retry(http: httpx.AsyncClient, api: AsyncAnthropic, uni: University) -> tuple[dict, bool]:
+    """Scrape once; on empty/all-null result, retry exactly once. Returns (data, succeeded)."""
+    data = await scrape_university(http, api, uni)
+    if _has_useful_data(data):
+        return data, True
+    print(f"  ↻ {uni.name}: first attempt yielded no usable data — retrying once")
+    await asyncio.sleep(RETRY_DELAY)
+    data = await scrape_university(http, api, uni)
+    return data, _has_useful_data(data)
+
 # ── DB write ───────────────────────────────────────────────────────────────────
 
-def update_university(db, uni: University, data: dict):
+def update_university(db, uni: University, data: dict, succeeded: bool):
     fields = [
         "tuition_min", "tuition_max", "tuition_currency",
         "ielts_min", "toefl_min", "gpa_min",
@@ -178,14 +183,18 @@ def update_university(db, uni: University, data: dict):
         if data.get(field) is not None:
             setattr(uni, field, data[field])
 
-    uni.tuition_usd = to_usd(
-        data.get("tuition_min"),
-        data.get("tuition_currency", "USD"),
-    )
+    # Recompute from the row's merged state so a partial scrape that doesn't
+    # return tuition doesn't wipe out a CSV-imported value.
+    uni.tuition_usd = to_usd(uni.tuition_min, uni.tuition_currency)
 
-    uni.last_scraped = datetime.utcnow()
-    uni.re_scrape_after = datetime.utcnow() + timedelta(days=90)
-    uni.scrape_status = "success" if data else "failed"
+    now = utcnow()
+    uni.last_scraped = now
+    if succeeded:
+        uni.scrape_status = "success"
+        uni.re_scrape_after = now + timedelta(days=SUCCESS_REFRESH_DAYS)
+    else:
+        uni.scrape_status = "failed"
+        uni.re_scrape_after = now + timedelta(days=FAILURE_REFRESH_DAYS)
     db.commit()
 
 # ── Runner ─────────────────────────────────────────────────────────────────────
@@ -201,26 +210,31 @@ async def run_scraper(
     target_ids:    list of IDs to scrape (overrides other selectors)
     refresh_all:   re-scrape every university in the DB
     stale_only:    re-scrape rows whose re_scrape_after has passed
-    default:       scrape rows with scrape_status == "pending"
+    default:       scrape pending + failed + stale rows (everything that needs work)
     """
     if not ANTHROPIC_API_KEY:
         print("⚠️  ANTHROPIC_API_KEY is not set — aborting scrape.")
         return
 
+    concurrency = min(concurrency, MAX_CONCURRENCY)
+
     db = SessionLocal()
     try:
+        now = utcnow()
         if target_ids:
             unis = db.query(University).filter(University.id.in_(target_ids)).all()
         elif refresh_all:
             unis = db.query(University).all()
         elif stale_only:
             unis = db.query(University).filter(
-                University.re_scrape_after <= datetime.utcnow()
+                University.re_scrape_after <= now
             ).all()
         else:
-            unis = db.query(University).filter(
-                University.scrape_status == "pending"
-            ).all()
+            unis = db.query(University).filter(or_(
+                University.scrape_status == "pending",
+                University.scrape_status == "failed",
+                University.re_scrape_after <= now,
+            )).all()
 
         print(f"\n🔍 Scraping {len(unis)} universities (concurrency={concurrency})...\n")
 
@@ -235,15 +249,15 @@ async def run_scraper(
             async def worker(uni: University):
                 async with sem:
                     print(f"  ▶ {uni.name} — {uni.website}")
-                    data = await scrape_university(http, api, uni)
-                    update_university(db, uni, data)
-                    if data:
+                    data, succeeded = await scrape_with_retry(http, api, uni)
+                    update_university(db, uni, data, succeeded)
+                    if succeeded:
                         filled = len([v for v in data.values() if v is not None])
                         usd = f"${uni.tuition_usd:,.0f}" if uni.tuition_usd else "—"
                         currency = data.get("tuition_currency", "USD")
-                        print(f"  ✅ {uni.name}: {filled} fields | tuition_usd={usd} ({currency})")
+                        print(f"  ✅ {uni.name}: {filled} fields | tuition_usd={usd} ({currency}) | next in {SUCCESS_REFRESH_DAYS}d")
                     else:
-                        print(f"  ❌ {uni.name}: no data extracted")
+                        print(f"  ❌ {uni.name}: failed after retry | next in {FAILURE_REFRESH_DAYS}d")
                     await asyncio.sleep(PER_TASK_DELAY)
 
             await asyncio.gather(*(worker(u) for u in unis))
