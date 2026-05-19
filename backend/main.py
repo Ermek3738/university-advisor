@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from dotenv import load_dotenv
 import anthropic
 import asyncio
@@ -257,6 +257,27 @@ def rank_universities(unis: List[University], profile: "StudentProfile", top_n: 
     return [u for u, _ in scored[:top_n]]
 
 
+def build_coverage_summary(db: Session) -> str:
+    """One-paragraph summary of the full DB so Claude can answer coverage questions
+    (e.g. "what countries do you have?") even though only the top matches are
+    serialized into the detailed list."""
+    rows = (
+        db.query(University.country, func.count(University.id))
+        .group_by(University.country)
+        .order_by(func.count(University.id).desc())
+        .all()
+    )
+    total = sum(c for _, c in rows)
+    parts = [f"{country} ({count})" for country, count in rows if country]
+    return (
+        f"FULL DATABASE COVERAGE: {total} partner universities across "
+        f"{len(parts)} countries — {', '.join(parts)}.\n"
+        "The detailed list below is only the top matches for the current student; "
+        "the full coverage figures above are authoritative when the consultant asks "
+        "about which countries/how many universities you have."
+    )
+
+
 def universities_to_context(unis: List[University]) -> str:
     """Serialize universities to text for Claude's context."""
     lines = []
@@ -349,8 +370,13 @@ async def chat(profile: StudentProfile, db: Session = Depends(get_db)):
     matched = rank_universities(matched, profile, top_n=MAX_UNIVERSITIES_TO_CLAUDE)
 
     # Step 3: Build Claude context
+    coverage = build_coverage_summary(db)
     uni_context = universities_to_context(matched)
-    system = SYSTEM_PROMPT + f"\n\n## YOUR PARTNER UNIVERSITIES DATABASE:\n{uni_context}"
+    system = (
+        SYSTEM_PROMPT
+        + f"\n\n## DATABASE COVERAGE OVERVIEW:\n{coverage}"
+        + f"\n\n## TOP MATCHES FOR THIS STUDENT (detailed):\n{uni_context}"
+    )
     messages = profile.history + [{"role": "user", "content": profile.message}]
 
     # Step 4: Call Claude
