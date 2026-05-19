@@ -20,11 +20,17 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from dotenv import load_dotenv
 import anthropic
 import asyncio
 import logging
 import os
 import sys
+
+# Load .env from the backend/ directory first, then fall back to the repo root.
+_BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(_BACKEND_DIR, ".env"))
+load_dotenv(os.path.join(_BACKEND_DIR, "..", ".env"))
 
 from models import University, SessionLocal, get_db
 from config import (
@@ -57,7 +63,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+_ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+if not _ANTHROPIC_API_KEY:
+    raise RuntimeError(
+    )
+client = anthropic.Anthropic(api_key=_ANTHROPIC_API_KEY)
 
 # ── Pydantic models ────────────────────────────────────────────────────────────
 
