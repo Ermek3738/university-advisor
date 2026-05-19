@@ -5,17 +5,12 @@ from datetime import datetime, timezone
 from typing import Optional
 import os
 
+from config import EXCHANGE_RATES
+
 
 def utcnow() -> datetime:
     # tz-aware UTC, then stripped to naive — matches the existing naive DateTime columns.
     return datetime.now(timezone.utc).replace(tzinfo=None)
-
-
-EXCHANGE_RATES = {
-    "USD": 1.00, "GBP": 1.27, "EUR": 1.08, "CAD": 0.74,
-    "AUD": 0.65, "NZD": 0.60, "SGD": 0.74, "JPY": 0.0067,
-    "CHF": 1.13, "SEK": 0.095, "NOK": 0.093, "DKK": 0.145,
-}
 
 
 def to_usd(amount, currency: Optional[str]) -> Optional[float]:
