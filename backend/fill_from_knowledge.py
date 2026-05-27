@@ -27,6 +27,15 @@ from typing import Any, Iterable, Optional
 
 from dotenv import load_dotenv
 
+# Force UTF-8 stdout so Unicode box-drawing / em-dashes render on Windows cp1252 consoles.
+for _stream in (sys.stdout, sys.stderr):
+    reconfigure = getattr(_stream, "reconfigure", None)
+    if reconfigure:
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(_HERE, ".env"))
 load_dotenv(os.path.join(_HERE, "..", ".env"))
