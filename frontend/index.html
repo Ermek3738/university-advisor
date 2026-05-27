@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI-Sana — Study Abroad Consultant</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
@@ -81,13 +83,12 @@ header {
 .logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
 .logo-mark {
   width:32px; height:32px;
-  background: var(--blue);
   border-radius:9px;
+  overflow:hidden;
   display:flex; align-items:center; justify-content:center;
   flex-shrink:0;
-  transition: background 0.2s;
 }
-.logo-mark svg { display:block; }
+.logo-mark img { width:100%; height:100%; object-fit:cover; display:block; }
 .logo-name { font-size:15px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
 .header-badge {
   display:flex; align-items:center; gap:5px;
@@ -214,9 +215,11 @@ header {
   text-align:center; gap:14px; animation:fadeUp 0.4s ease;
 }
 .welcome-logo {
-  width:56px; height:56px; background:var(--blue);
-  border-radius:16px; display:flex; align-items:center; justify-content:center; margin-bottom:4px;
+  width:56px; height:56px;
+  border-radius:16px; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; margin-bottom:4px;
 }
+.welcome-logo img { width:100%; height:100%; object-fit:cover; display:block; }
 .welcome h2 { font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
 .welcome p { font-size:13px; color:var(--text-muted); max-width:360px; line-height:1.65; }
 .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:520px; margin-top:6px; }
@@ -240,8 +243,8 @@ header {
   display:flex; align-items:center; justify-content:center;
   flex-shrink:0; border:0.5px solid; font-size:13px;
 }
-.avatar.ai { background:var(--blue-dim); border-color:var(--blue-border); }
-.avatar.ai svg { display:block; }
+.avatar.ai { background:var(--blue-dim); border-color:var(--blue-border); overflow:hidden; }
+.avatar.ai img { width:100%; height:100%; object-fit:cover; display:block; }
 .avatar.user { background:var(--bg-raised); border-color:var(--border); color:var(--text-muted); }
 .bubble { border-radius:14px; padding:12px 16px; font-size:13.5px; line-height:1.65; border:0.5px solid; }
 .message.ai .bubble { background:var(--bg-deep); border-color:var(--border); color:var(--text-dim); border-top-left-radius:4px; }
@@ -301,10 +304,7 @@ header {
 <header>
   <a class="logo" href="#">
     <div class="logo-mark">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-      </svg>
+      <img src="logo.png" alt="AI-Sana logo">
     </div>
     <span class="logo-name">AI-Sana</span>
   </a>
@@ -387,10 +387,7 @@ header {
     <div class="messages" id="messages">
       <div class="welcome" id="welcome">
         <div class="welcome-logo">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
+          <img src="logo.png" alt="AI-Sana logo">
         </div>
         <h2 data-i18n="welcomeTitle">University Matching Assistant</h2>
         <p data-i18n="welcomeDesc">Describe a student's situation and I'll find the best matching universities from your partner database.</p>
@@ -618,7 +615,7 @@ function renderMarkdown(text) {
 
 function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-const AI_AVATAR = `<div class="avatar ai"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue-text)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>`;
+const AI_AVATAR = `<div class="avatar ai"><img src="logo.png" alt="AI"></div>`;
 const USER_AVATAR = `<div class="avatar user"><i class="ti ti-user" style="font-size:13px;"></i></div>`;
 
 function addMessage(role, text, scroll=true) {
@@ -697,7 +694,7 @@ function newChat() {
   activeSessionId=null; chatHistory=[];
   const msgs=document.getElementById('messages');
   msgs.innerHTML=`<div class="welcome" id="welcome">
-    <div class="welcome-logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+    <div class="welcome-logo"><img src="logo.png" alt="AI-Sana logo"></div>
     <h2>${t('welcomeTitle')}</h2>
     <p>${t('welcomeDesc')}</p>
     <div class="quick-grid">
