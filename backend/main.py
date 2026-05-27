@@ -32,7 +32,7 @@ _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(_BACKEND_DIR, ".env"))
 load_dotenv(os.path.join(_BACKEND_DIR, "..", ".env"))
 
-from models import University, SessionLocal, get_db
+from models import University, SessionLocal, get_db, to_usd
 from config import (
     MIN_RESULTS,
     MAX_UNIVERSITIES_TO_CLAUDE,
@@ -484,3 +484,189 @@ def scrape_status():
     """Check whether a background scrape is currently running."""
     running = bool(_scrape_task and not _scrape_task.done())
     return {"running": running}
+
+
+# ── Admin panel ────────────────────────────────────────────────────────────────
+# TODO: add auth — these endpoints are open for internal use only.
+
+REQUIRED_COMPLETE_FIELDS = ("tuition_min", "ielts_min", "gpa_min", "programs", "intakes")
+
+
+def _is_complete(u: University) -> bool:
+    """A row counts as complete if all five spec fields are non-null & non-empty."""
+    for field in REQUIRED_COMPLETE_FIELDS:
+        v = getattr(u, field, None)
+        if v is None:
+            return False
+        if isinstance(v, str) and not v.strip():
+            return False
+    return True
+
+
+def _university_to_dict(u: University) -> dict:
+    return {
+        "id": u.id,
+        "name": u.name,
+        "country": u.country,
+        "city": u.city,
+        "website": u.website,
+        "qs_ranking": u.qs_ranking,
+        "tuition_min": u.tuition_min,
+        "tuition_max": u.tuition_max,
+        "tuition_currency": u.tuition_currency,
+        "tuition_usd": u.tuition_usd,
+        "ielts_min": u.ielts_min,
+        "toefl_min": u.toefl_min,
+        "gpa_min": u.gpa_min,
+        "programs": u.programs,
+        "intakes": u.intakes,
+        "application_deadline": u.application_deadline,
+        "scholarship_available": u.scholarship_available,
+        "notes": u.notes,
+        "scrape_status": u.scrape_status,
+        "last_scraped": u.last_scraped.isoformat() if u.last_scraped else None,
+    }
+
+
+class UniversityCreate(BaseModel):
+    name: str = Field(..., min_length=1)
+    country: Optional[str] = None
+    city: Optional[str] = None
+    website: Optional[str] = None
+    qs_ranking: Optional[int] = None
+    tuition_min: Optional[float] = None
+    tuition_max: Optional[float] = None
+    tuition_currency: Optional[str] = "USD"
+    ielts_min: Optional[float] = None
+    toefl_min: Optional[int] = None
+    gpa_min: Optional[float] = None
+    programs: Optional[str] = None
+    intakes: Optional[str] = None
+    application_deadline: Optional[str] = None
+    scholarship_available: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class UniversityUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1)
+    country: Optional[str] = None
+    city: Optional[str] = None
+    website: Optional[str] = None
+    qs_ranking: Optional[int] = None
+    tuition_min: Optional[float] = None
+    tuition_max: Optional[float] = None
+    tuition_currency: Optional[str] = None
+    ielts_min: Optional[float] = None
+    toefl_min: Optional[int] = None
+    gpa_min: Optional[float] = None
+    programs: Optional[str] = None
+    intakes: Optional[str] = None
+    application_deadline: Optional[str] = None
+    scholarship_available: Optional[str] = None
+    notes: Optional[str] = None
+
+
+@app.get("/admin/universities")
+def admin_list_universities(db: Session = Depends(get_db)):
+    """Return every university grouped by country with completeness counts."""
+    unis = db.query(University).all()
+    by_country: dict[str, list[University]] = {}
+    for u in unis:
+        key = (u.country or "Unknown").strip() or "Unknown"
+        by_country.setdefault(key, []).append(u)
+
+    countries = []
+    total_complete = 0
+    for country_name in sorted(by_country.keys(), key=lambda s: s.lower()):
+        country_unis = sorted(by_country[country_name], key=lambda x: (x.name or "").lower())
+        complete = sum(1 for u in country_unis if _is_complete(u))
+        total_complete += complete
+        countries.append({
+            "name": country_name,
+            "total": len(country_unis),
+            "complete": complete,
+            "universities": [_university_to_dict(u) for u in country_unis],
+        })
+
+    return {
+        "countries": countries,
+        "total_universities": len(unis),
+        "total_complete": total_complete,
+    }
+
+
+@app.get("/admin/countries")
+def admin_countries(db: Session = Depends(get_db)):
+    rows = db.query(University.country).distinct().all()
+    names = sorted(
+        {r[0].strip() for r in rows if r[0] and r[0].strip()},
+        key=lambda s: s.lower(),
+    )
+    return {"countries": names}
+
+
+@app.get("/admin/universities/{uni_id}")
+def admin_get_university(uni_id: int, db: Session = Depends(get_db)):
+    u = db.get(University, uni_id)
+    if not u:
+        raise HTTPException(status_code=404, detail="University not found")
+    return _university_to_dict(u)
+
+
+@app.post("/admin/universities")
+def admin_create_university(body: UniversityCreate, db: Session = Depends(get_db)):
+    u = University()
+    for k, v in body.model_dump().items():
+        setattr(u, k, v)
+    u.tuition_usd = to_usd(u.tuition_min, u.tuition_currency)
+    db.add(u)
+    db.commit()
+    db.refresh(u)
+    return _university_to_dict(u)
+
+
+@app.put("/admin/universities/{uni_id}")
+def admin_update_university(uni_id: int, body: UniversityUpdate, db: Session = Depends(get_db)):
+    u = db.get(University, uni_id)
+    if not u:
+        raise HTTPException(status_code=404, detail="University not found")
+    data = body.model_dump(exclude_unset=True)
+    for k, v in data.items():
+        setattr(u, k, v)
+    # Recompute USD any time tuition or currency could have changed (cheap & safe).
+    u.tuition_usd = to_usd(u.tuition_min, u.tuition_currency)
+    db.commit()
+    db.refresh(u)
+    return _university_to_dict(u)
+
+
+@app.delete("/admin/universities/{uni_id}")
+def admin_delete_university(uni_id: int, db: Session = Depends(get_db)):
+    u = db.get(University, uni_id)
+    if not u:
+        raise HTTPException(status_code=404, detail="University not found")
+    db.delete(u)
+    db.commit()
+    return {"deleted": True, "id": uni_id}
+
+
+# ── Startup: auto-import partner CSV if DB is empty ────────────────────────────
+
+@app.on_event("startup")
+async def auto_import_on_startup():
+    db = SessionLocal()
+    try:
+        count = db.query(University).count()
+        if count == 0:
+            csv_path = os.path.join(_BACKEND_DIR, "data", "universities_real.csv")
+            if os.path.exists(csv_path):
+                try:
+                    from import_universities import import_csv
+                    import_csv(csv_path, update=False)
+                    logger.info("Auto-imported universities_real.csv on startup")
+                except Exception as exc:
+                    logger.exception("Auto-import failed: %s", exc)
+            else:
+                logger.warning("Auto-import skipped: %s not found", csv_path)
+    finally:
+        db.close()

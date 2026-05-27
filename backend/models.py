@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime, inspect, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timezone
@@ -49,6 +49,7 @@ class University(Base):
 
     scholarship_available = Column(String, nullable=True)  # "Yes / No / Partial"
     notes = Column(Text, nullable=True)           # any extra info from scrape
+    qs_ranking = Column(Integer, nullable=True)   # QS World University Ranking
 
     tuition_usd = Column(Float, nullable=True)           # always USD, populated post-scrape
 
@@ -70,6 +71,22 @@ else:
     engine = create_engine(f"sqlite:///{_SQLITE_PATH}", connect_args={"check_same_thread": False})
 
 Base.metadata.create_all(bind=engine)
+
+
+def run_migrations(engine):
+    """Idempotent column-add migrations for schema changes after the initial
+    create_all. Safe for both SQLite (local dev) and Postgres (Supabase) since
+    ``ALTER TABLE ... ADD COLUMN`` works the same way on both."""
+    inspector = inspect(engine)
+    columns = [col["name"] for col in inspector.get_columns("universities")]
+    with engine.connect() as conn:
+        if "qs_ranking" not in columns:
+            conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking INTEGER"))
+            conn.commit()
+
+
+run_migrations(engine)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
