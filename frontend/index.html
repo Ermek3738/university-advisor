@@ -8,6 +8,7 @@
 <link rel="apple-touch-icon" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root {
   --bg:            #1e293b;
@@ -261,6 +262,22 @@ header {
 .bubble hr { border:none; border-top:0.5px solid var(--border); margin:10px 0; }
 .bubble blockquote { border-left:2px solid var(--blue); padding-left:12px; color:var(--text-dim); margin:8px 0; }
 .bubble p { margin:4px 0; }
+.msg-actions {
+  display:flex; gap:6px; margin-top:6px; padding-left:2px;
+  opacity:0; transition:opacity 0.15s;
+}
+.message.ai:hover .msg-actions { opacity:1; }
+.msg-action-btn {
+  display:inline-flex; align-items:center; gap:4px;
+  background:transparent; border:0.5px solid var(--border);
+  color:var(--text-muted); cursor:pointer;
+  border-radius:var(--radius-sm); padding:3px 8px;
+  font-family:var(--font); font-size:11px; font-weight:500;
+  transition:background 0.15s, color 0.15s, border-color 0.15s;
+}
+.msg-action-btn:hover { background:var(--blue-dim); color:var(--blue-text); border-color:var(--blue-border); }
+.msg-action-btn i { font-size:13px; }
+.message.ai .bubble-content { display:block; }
 /* Typing */
 .typing-wrap { display:flex; gap:10px; animation:fadeUp 0.25s ease; }
 .typing-bubble {
@@ -443,6 +460,8 @@ const i18n = {
     noProfile:'Fill in at least one profile field first.',
     profileSuffix:' — recommend the best matching universities.',
     offline:'⚠️ Could not connect to the backend. Make sure the API server is running.',
+    downloadPdf:'Download PDF',
+    pdfTitle:'AI-Sana — University Recommendations',
   },
   ru: {
     newConsult:'Новая консультация', history:'История',
@@ -461,6 +480,8 @@ const i18n = {
     noProfile:'Заполните хотя бы одно поле профиля.',
     profileSuffix:' — подберите лучшие подходящие университеты.',
     offline:'⚠️ Не удалось подключиться к серверу.',
+    downloadPdf:'Скачать PDF',
+    pdfTitle:'AI-Sana — Подбор университетов',
   }
 };
 
@@ -624,10 +645,50 @@ function addMessage(role, text, scroll=true) {
   const div=document.createElement('div');
   div.className='message '+role;
   const content=role==='ai'?renderMarkdown(text):escHtml(text);
-  div.innerHTML=(role==='ai'?AI_AVATAR:USER_AVATAR)+'<div class="bubble">'+content+'</div>';
+  let bubbleHtml='<div class="bubble"><div class="bubble-content">'+content+'</div>';
+  if(role==='ai') {
+    bubbleHtml+='<div class="msg-actions"><button class="msg-action-btn" onclick="downloadMessagePdf(this)" title="'+t('downloadPdf')+'"><i class="ti ti-download"></i><span>'+t('downloadPdf')+'</span></button></div>';
+  }
+  bubbleHtml+='</div>';
+  div.innerHTML=(role==='ai'?AI_AVATAR:USER_AVATAR)+bubbleHtml;
   msgs.appendChild(div);
   if(scroll) msgs.scrollTop=msgs.scrollHeight;
   return div;
+}
+
+function downloadMessagePdf(btn) {
+  const bubble=btn.closest('.bubble');
+  const content=bubble?.querySelector('.bubble-content');
+  if(!content) return;
+  const isLight=document.body.classList.contains('light');
+  const wrap=document.createElement('div');
+  wrap.style.cssText='padding:32px;background:#ffffff;color:#0f172a;font-family:\'DM Sans\',sans-serif;font-size:13px;line-height:1.65;width:720px;';
+  wrap.innerHTML=
+    '<div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #e2e8f0;padding-bottom:14px;margin-bottom:18px;">'+
+      '<img src="logo.png" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;">'+
+      '<div>'+
+        '<div style="font-size:15px;font-weight:700;letter-spacing:-0.3px;">'+t('pdfTitle')+'</div>'+
+        '<div style="font-size:11px;color:#64748b;font-family:\'DM Mono\',monospace;margin-top:2px;">'+new Date().toLocaleString(lang==='ru'?'ru-RU':'en-GB')+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="pdf-body">'+content.innerHTML+'</div>'+
+    '<div style="margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center;">AI-Sana · '+location.host+'</div>';
+  wrap.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color='#1d4ed8';h.style.margin='14px 0 6px';h.style.fontSize='15px';});
+  wrap.querySelectorAll('strong').forEach(e=>e.style.color='#0f172a');
+  wrap.querySelectorAll('a').forEach(a=>{a.style.color='#1d4ed8';a.style.textDecoration='none';});
+  wrap.querySelectorAll('code').forEach(c=>{c.style.background='#f1f5f9';c.style.padding='1px 5px';c.style.borderRadius='4px';c.style.fontFamily="'DM Mono',monospace";c.style.fontSize='12px';});
+  wrap.querySelectorAll('blockquote').forEach(b=>{b.style.borderLeft='2px solid #2563eb';b.style.paddingLeft='12px';b.style.color='#475569';b.style.margin='8px 0';});
+  wrap.querySelectorAll('hr').forEach(h=>{h.style.border='none';h.style.borderTop='1px solid #e2e8f0';h.style.margin='10px 0';});
+  document.body.appendChild(wrap);
+  const stamp=new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+  html2pdf().set({
+    margin:0,
+    filename:'ai-sana-recommendations-'+stamp+'.pdf',
+    image:{type:'jpeg',quality:0.95},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']},
+  }).from(wrap).save().then(()=>wrap.remove()).catch(()=>wrap.remove());
 }
 
 function addTyping() {
