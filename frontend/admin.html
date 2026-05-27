@@ -24,6 +24,31 @@
   --green-dim:  rgba(16,185,129,0.14);
   --orange-dim: rgba(245,158,11,0.14);
   --red-dim:    rgba(239,68,68,0.14);
+  --shadow-drawer: -20px 0 40px rgba(0,0,0,0.4);
+  --shadow-toast: 0 8px 30px rgba(0,0,0,0.3);
+  --scrollbar-thumb: var(--border);
+  --scrollbar-thumb-hover: #3a3e54;
+}
+.light {
+  --bg:         #f8fafc;
+  --surface:    #ffffff;
+  --surface-2:  #f1f5f9;
+  --border:     #e2e8f0;
+  --accent:     #2563eb;
+  --accent-dim: rgba(37,99,235,0.08);
+  --text:       #0f172a;
+  --text-muted: #64748b;
+  --text-dim:   #94a3b8;
+  --green:      #059669;
+  --orange:     #d97706;
+  --red:        #dc2626;
+  --green-dim:  rgba(5,150,105,0.10);
+  --orange-dim: rgba(217,119,6,0.10);
+  --red-dim:    rgba(220,38,38,0.08);
+  --shadow-drawer: -20px 0 40px rgba(15,23,42,0.12);
+  --shadow-toast: 0 8px 30px rgba(15,23,42,0.10);
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; }
@@ -34,10 +59,11 @@ body {
   font-size:13px;
   display:flex; flex-direction:column;
   overflow:hidden;
+  transition:background 0.2s, color 0.2s;
 }
 ::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:#3a3e54; }
+::-webkit-scrollbar-thumb { background:var(--scrollbar-thumb); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--scrollbar-thumb-hover); }
 button { font-family:inherit; cursor:pointer; }
 input, select, textarea { font-family:inherit; }
 a { color:var(--accent); text-decoration:none; }
@@ -298,7 +324,7 @@ header {
   transition:transform 0.25s ease;
   z-index:60;
   display:flex; flex-direction:column;
-  box-shadow:-20px 0 40px rgba(0,0,0,0.4);
+  box-shadow:var(--shadow-drawer);
 }
 .drawer.open { transform:translateX(0); }
 .drawer-head {
@@ -358,7 +384,7 @@ header {
   display:flex; align-items:center; gap:9px;
   font-size:12.5px; color:var(--text);
   min-width:200px; max-width:340px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+  box-shadow:var(--shadow-toast);
   animation:slideIn 0.25s ease;
 }
 .toast.success { border-color:rgba(16,185,129,0.4); }
@@ -423,6 +449,9 @@ header {
     <span class="tag">Admin</span>
   </div>
   <div class="header-stats" id="headerStats"></div>
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme" style="width:34px;height:34px;">
+    <i class="ti ti-sun" id="themeIcon"></i>
+  </button>
   <a class="chat-link" href="index.html"><i class="ti ti-message-circle"></i><span>Chat</span></a>
 </header>
 
@@ -577,6 +606,24 @@ header {
 <script>
 // TODO: add auth — admin endpoints are open. Wrap fetch() with a token header here.
 const API_BASE = 'http://localhost:8000';
+const THEME_KEY = 'aisana_admin_theme';
+
+function applyTheme(isDark) {
+  document.body.classList.toggle('light', !isDark);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.className = isDark ? 'ti ti-sun' : 'ti ti-moon';
+}
+function toggleTheme() {
+  const isDark = !document.body.classList.contains('light');
+  const next = !isDark;
+  applyTheme(next);
+  try { localStorage.setItem(THEME_KEY, next ? 'dark' : 'light'); } catch {}
+}
+(function initTheme() {
+  let saved = 'dark';
+  try { saved = localStorage.getItem(THEME_KEY) || 'dark'; } catch {}
+  applyTheme(saved !== 'light');
+})();
 
 const state = {
   countries: [],          // [{name, total, complete, universities:[...]}]
@@ -682,8 +729,9 @@ function renderCountries() {
 
 function countryItemHtml(c, active, key) {
   const pct = c.total ? Math.round((c.complete / c.total) * 100) : 0;
+  const dataAttr = key === 'all' ? 'data-country-all="1"' : `data-country="${esc(c.name)}"`;
   return `
-    <div class="country-item${active?' active':''}" onclick="selectCountry(${key === 'all' ? 'null' : JSON.stringify(c.name)})">
+    <div class="country-item${active?' active':''}" ${dataAttr}>
       <div class="country-row">
         <span class="country-name">${esc(c.name)}</span>
         <span class="country-count">${c.total}</span>
@@ -984,6 +1032,12 @@ function toast(msg, type = 'success') {
 document.getElementById('countrySearch').addEventListener('input', e => {
   state.countrySearch = e.target.value;
   renderCountries();
+});
+document.getElementById('countryList').addEventListener('click', e => {
+  const item = e.target.closest('.country-item');
+  if (!item) return;
+  if (item.hasAttribute('data-country-all')) selectCountry(null);
+  else selectCountry(item.getAttribute('data-country'));
 });
 document.getElementById('uniSearch').addEventListener('input', e => {
   state.uniSearch = e.target.value;
