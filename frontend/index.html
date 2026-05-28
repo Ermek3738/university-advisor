@@ -654,6 +654,7 @@ function addMessage(role, text, scroll=true) {
   }
   bubbleHtml+='</div>';
   div.innerHTML=(role==='ai'?AI_AVATAR:USER_AVATAR)+bubbleHtml;
+  if(role==='ai') div.querySelector('.bubble-content').dataset.raw=text;
   msgs.appendChild(div);
   if(scroll) msgs.scrollTop=msgs.scrollHeight;
   return div;
@@ -664,6 +665,18 @@ function downloadMessagePdf(btn) {
   const bubble=btn.closest('.bubble');
   const content=bubble?.querySelector('.bubble-content');
   if(!content) return;
+  const raw=content.dataset.raw;
+  let bodyHtml;
+  if(raw){
+    let uniSeen=false;
+    bodyHtml=raw.split(/^\s*---\s*$/m).map(b=>b.trim()).filter(Boolean).map(block=>{
+      const brk=/🏛/.test(block)&&uniSeen;
+      if(/🏛/.test(block)) uniSeen=true;
+      return '<div class="pdf-section'+(brk?' uni-break" style="padding-top:24px;':'')+'">'+renderMarkdown(block)+'</div>';
+    }).join('');
+  } else {
+    bodyHtml=content.innerHTML;
+  }
   const isLight=document.body.classList.contains('light');
   const wrap=document.createElement('div');
   wrap.style.cssText='padding:32px;background:#ffffff;color:#0f172a;font-family:\'DM Sans\',sans-serif;font-size:13px;line-height:1.65;width:720px;';
@@ -675,7 +688,7 @@ function downloadMessagePdf(btn) {
         '<div style="font-size:11px;color:#64748b;font-family:\'DM Mono\',monospace;margin-top:2px;">'+new Date().toLocaleString(lang==='ru'?'ru-RU':'en-GB')+'</div>'+
       '</div>'+
     '</div>'+
-    '<div class="pdf-body">'+content.innerHTML+'</div>'+
+    '<div class="pdf-body">'+bodyHtml+'</div>'+
     '<div style="margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0;font-size:10px;color:#94a3b8;text-align:center;">AI-Sana · '+location.host+'</div>';
   wrap.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color='#1d4ed8';h.style.margin='14px 0 6px';h.style.fontSize='15px';});
   wrap.querySelectorAll('strong').forEach(e=>e.style.color='#0f172a');
@@ -691,7 +704,7 @@ function downloadMessagePdf(btn) {
     image:{type:'jpeg',quality:0.95},
     html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
     jsPDF:{unit:'pt',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy']},
+    pagebreak:{mode:['css','legacy'], before:'.uni-break'},
   }).from(wrap).save().then(()=>wrap.remove()).catch(()=>wrap.remove());
 }
 
