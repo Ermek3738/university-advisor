@@ -21,10 +21,15 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 from dotenv import load_dotenv
+from datetime import timedelta
 import anthropic
 import asyncio
+import difflib
+import html
+import httpx
 import logging
 import os
+import re
 import sys
 import tempfile
 
@@ -33,7 +38,7 @@ _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(_BACKEND_DIR, ".env"))
 load_dotenv(os.path.join(_BACKEND_DIR, "..", ".env"))
 
-from models import University, SessionLocal, get_db, to_usd
+from models import University, SessionLocal, get_db, to_usd, utcnow
 from config import (
     MIN_RESULTS,
     MAX_UNIVERSITIES_TO_CLAUDE,
@@ -681,6 +686,113 @@ async def admin_import_csv(file: UploadFile = File(...)):
     return summary
 
 
+# ── QS rankings scraper ───────────────────────────────────────────────────────
+
+QS_RANKINGS_URL = (
+    "https://www.topuniversities.com/sites/default/files/"
+    "qs-rankings-data/en/3740566_indicators.txt"
+)
+
+# Provider/partner suffixes appended to partner-university names that aren't
+# part of the school's actual QS-listed name — stripped before matching.
+QS_PROVIDER_SUFFIXES = (
+    "INTO", "Navitas", "Kaplan", "Study Group",
+    "Shorelight", "UP Education", "QA",
+)
+_QS_SUFFIX_RE = re.compile(
+    r"\s*\((?:" + "|".join(re.escape(s) for s in QS_PROVIDER_SUFFIXES) + r")\)\s*$",
+    flags=re.IGNORECASE,
+)
+
+
+def _qs_normalize(name: str) -> str:
+    if not name:
+        return ""
+    return _QS_SUFFIX_RE.sub("", name).strip().lower()
+
+
+def _qs_parse_rank(rank_display) -> Optional[int]:
+    """Parse QS rank strings: '312' → 312, '=400' → 400, '801-1000' → 801, '1201+' → 1201."""
+    if rank_display is None:
+        return None
+    s = str(rank_display).strip().lstrip("=")
+    if not s:
+        return None
+    if s.endswith("+"):
+        s = s[:-1]
+    if "-" in s:
+        s = s.split("-", 1)[0]
+    s = s.strip()
+    return int(s) if s.isdigit() else None
+
+
+async def run_qs_scraper() -> None:
+    """Fetch the QS World University Rankings feed and populate ``qs_ranking``
+    on each matching ``University`` row. Match is case-insensitive on the
+    cleaned partner-suffix-stripped name, with a difflib fallback at 0.82."""
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept": "application/json, text/plain, */*",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as http:
+            resp = await http.get(QS_RANKINGS_URL, headers=headers)
+            resp.raise_for_status()
+            payload = resp.json()
+    except Exception as exc:
+        logger.exception("QS scrape: fetch failed: %s", exc)
+        return
+
+    items = payload.get("data") if isinstance(payload, dict) else None
+    if not items:
+        logger.warning("QS scrape: no 'data' array in response")
+        return
+
+    lookup: dict[str, int] = {}
+    for item in items:
+        # The feed wraps both name and rank in HTML; strip tags before use.
+        raw_name = item.get("uni") or item.get("title") or ""
+        name = html.unescape(re.sub(r"<[^>]+>", "", raw_name)).strip()
+        raw_rank = item.get("overall_rank_dis") or item.get("rank_display") or ""
+        rank_str = re.sub(r"<[^>]+>", "", str(raw_rank)).strip()
+        rank = _qs_parse_rank(rank_str)
+        if not name or rank is None:
+            continue
+        key = name.lower()
+        # On duplicate names keep the best (smallest) rank.
+        if key not in lookup or rank < lookup[key]:
+            lookup[key] = rank
+
+    qs_names = list(lookup.keys())
+    matched = 0
+
+    db = SessionLocal()
+    try:
+        unis = db.query(University).all()
+        total = len(unis)
+        for uni in unis:
+            cleaned = _qs_normalize(uni.name)
+            if not cleaned:
+                continue
+            rank = lookup.get(cleaned)
+            if rank is None:
+                near = difflib.get_close_matches(cleaned, qs_names, n=1, cutoff=0.82)
+                if near:
+                    rank = lookup[near[0]]
+            if rank is not None:
+                uni.qs_ranking = rank
+                uni.qs_ranking_updated_at = utcnow()
+                matched += 1
+        db.commit()
+    finally:
+        db.close()
+
+    logger.info("QS scrape done: %d matched out of %d", matched, total)
+
+
 # ── Startup: auto-import partner CSV if DB is empty ────────────────────────────
 
 @app.on_event("startup")
@@ -699,5 +811,14 @@ async def auto_import_on_startup():
                     logger.exception("Auto-import failed: %s", exc)
             else:
                 logger.warning("Auto-import skipped: %s not found", csv_path)
+
+        stale = db.query(University).filter(
+            or_(
+                University.qs_ranking_updated_at.is_(None),
+                University.qs_ranking_updated_at < utcnow() - timedelta(days=360),
+            )
+        ).first()
+        if stale:
+            asyncio.create_task(run_qs_scraper())
     finally:
         db.close()

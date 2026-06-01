@@ -50,6 +50,7 @@ class University(Base):
     scholarship_available = Column(String, nullable=True)  # "Yes / No / Partial"
     notes = Column(Text, nullable=True)           # any extra info from scrape
     qs_ranking = Column(Integer, nullable=True)   # QS World University Ranking
+    qs_ranking_updated_at = Column(DateTime, nullable=True)
 
     tuition_usd = Column(Float, nullable=True)           # always USD, populated post-scrape
 
@@ -82,6 +83,9 @@ def run_migrations(engine):
     with engine.connect() as conn:
         if "qs_ranking" not in columns:
             conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking INTEGER"))
+            conn.commit()
+        if "qs_ranking_updated_at" not in columns:
+            conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking_updated_at TIMESTAMP"))
             conn.commit()
 
 
