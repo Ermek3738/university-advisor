@@ -605,7 +605,7 @@ header {
 
 <script>
 // TODO: add auth — admin endpoints are open. Wrap fetch() with a token header here.
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'https://ai-sana-bk23.onrender.com';
 const THEME_KEY = 'aisana_admin_theme';
 
 function applyTheme(isDark) {
@@ -687,7 +687,7 @@ async function loadAll() {
       <div class="error-screen">
         <i class="ti ti-plug-connected-x"></i>
         <h2>Cannot connect to backend</h2>
-        <p>Failed to reach <code>${API_BASE}</code> — make sure <code>uvicorn main:app --reload</code> is running from <code>backend/</code>.</p>
+        <p>Failed to reach <code>${API_BASE}</code> — the backend may be sleeping (Render free tier) or offline. Wait ~30s and retry.</p>
         <button class="btn-primary" onclick="location.reload()">Retry</button>
       </div>`;
   }
