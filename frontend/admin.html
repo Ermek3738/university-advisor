@@ -395,6 +395,112 @@ header {
 @keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
 @keyframes slideOut { to { transform:translateX(120%); opacity:0; } }
 
+/* ── Modal (CSV import) ────────────────────────────────────────── */
+.modal {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%, -46%);
+  width:560px; max-width:92vw; max-height:86vh;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px;
+  display:none; flex-direction:column;
+  z-index:70;
+  box-shadow:var(--shadow-drawer);
+  opacity:0;
+  transition:opacity 0.18s ease, transform 0.18s ease;
+}
+.modal.open {
+  display:flex; opacity:1;
+  transform:translate(-50%, -50%);
+}
+.modal-head {
+  padding:14px 18px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.modal-title { font-size:14.5px; font-weight:600; }
+.modal-body { padding:16px 18px; overflow-y:auto; flex:1; }
+.modal-foot {
+  padding:12px 18px; border-top:1px solid var(--border);
+  display:flex; gap:10px; justify-content:flex-end;
+  flex-shrink:0;
+  background:var(--surface);
+}
+
+.import-intro {
+  font-size:12.5px; color:var(--text-muted);
+  line-height:1.55; margin:0 0 14px;
+}
+.import-columns {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:8px; padding:11px 13px; margin-bottom:14px;
+}
+.import-columns-label {
+  font-size:10px; font-weight:700; letter-spacing:1.2px;
+  color:var(--text-dim); text-transform:uppercase; margin-bottom:8px;
+}
+.import-columns-list { display:flex; flex-wrap:wrap; gap:6px; }
+.import-columns-list span {
+  display:inline-flex; align-items:center; gap:2px; font-size:11px;
+}
+.import-columns-list code {
+  background:var(--surface-2); color:var(--text);
+  padding:2px 6px; border-radius:4px;
+  font-family:'JetBrains Mono', monospace; font-size:11px;
+}
+.import-columns-list .req { color:var(--red); font-weight:700; }
+.import-template-row { margin-top:10px; }
+.import-template-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11.5px; color:var(--accent);
+  text-decoration:none; font-weight:500;
+  cursor:pointer;
+}
+.import-template-link:hover { text-decoration:underline; }
+.import-file-row {
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.import-file-name {
+  font-size:12px; color:var(--text-dim);
+  font-family:'JetBrains Mono', monospace;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  max-width:100%;
+}
+.import-file-name.has-file { color:var(--text); }
+
+.import-result { display:flex; flex-direction:column; gap:14px; }
+.import-result-stats {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;
+}
+.import-stat {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:8px; padding:12px 14px;
+  text-align:center;
+}
+.import-stat .n {
+  font-size:22px; font-weight:700; color:var(--text);
+  font-variant-numeric:tabular-nums; line-height:1.1;
+}
+.import-stat .label {
+  font-size:10px; font-weight:700; letter-spacing:1px;
+  color:var(--text-dim); text-transform:uppercase; margin-top:4px;
+}
+.import-stat.added .n { color:var(--green); }
+.import-stat.updated .n { color:var(--accent); }
+.import-stat.skipped .n { color:var(--orange); }
+.import-errors {
+  background:var(--red-dim); border:1px solid rgba(239,68,68,0.25);
+  border-radius:8px; padding:10px 12px;
+}
+.import-errors-title {
+  font-size:11px; font-weight:700; letter-spacing:0.6px;
+  color:var(--red); text-transform:uppercase; margin-bottom:6px;
+}
+.import-errors ul {
+  margin:0; padding-left:18px;
+  font-size:11.5px; color:var(--text-muted); line-height:1.6;
+  max-height:140px; overflow-y:auto;
+}
+
 /* ── Spinner / loading screen ──────────────────────────────────── */
 .loading-screen {
   position:fixed; inset:0;
@@ -480,6 +586,9 @@ header {
           <i class="ti ti-search"></i>
           <input id="uniSearch" placeholder="Search universities, programs, notes…">
         </div>
+        <button class="btn-ghost" onclick="openImportModal()">
+          <i class="ti ti-file-upload"></i><span>Import CSV</span>
+        </button>
         <button class="btn-primary" onclick="openDrawer(null)">
           <i class="ti ti-plus"></i><span>Add University</span>
         </button>
@@ -598,6 +707,60 @@ header {
   <div class="drawer-foot">
     <button class="btn-ghost" onclick="closeDrawer()">Cancel</button>
     <button class="btn-primary" id="saveBtn" onclick="saveDrawer()"><i class="ti ti-device-floppy"></i><span>Save</span></button>
+  </div>
+</div>
+
+<!-- Import CSV modal -->
+<div class="drawer-backdrop" id="importBackdrop" onclick="closeImportModal()"></div>
+<div class="modal" id="importModal">
+  <div class="modal-head">
+    <span class="modal-title">Import Universities from CSV</span>
+    <button class="icon-btn" onclick="closeImportModal()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="modal-body">
+    <div id="importStep">
+      <p class="import-intro">
+        Upload a CSV to add or update universities in bulk. Rows matched by <code>name</code> are updated; new names are added.
+      </p>
+      <div class="import-columns">
+        <div class="import-columns-label">Expected columns</div>
+        <div class="import-columns-list">
+          <span><code>name</code><span class="req">*</span></span>
+          <span><code>country</code></span>
+          <span><code>city</code></span>
+          <span><code>website</code><span class="req">*</span></span>
+          <span><code>programs</code></span>
+          <span><code>ielts_min</code></span>
+          <span><code>toefl_min</code></span>
+          <span><code>gpa_min</code></span>
+          <span><code>tuition_min</code></span>
+          <span><code>tuition_max</code></span>
+          <span><code>tuition_currency</code></span>
+          <span><code>intakes</code></span>
+          <span><code>scholarship_available</code></span>
+          <span><code>notes</code></span>
+        </div>
+        <div class="import-template-row">
+          <a class="import-template-link" onclick="downloadTemplate()">
+            <i class="ti ti-download"></i> Download blank template
+          </a>
+        </div>
+      </div>
+      <div class="import-file-row">
+        <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none" onchange="onCsvPicked()">
+        <button class="btn-ghost" onclick="document.getElementById('csvFileInput').click()">
+          <i class="ti ti-file-spreadsheet"></i><span>Choose file</span>
+        </button>
+        <span class="import-file-name" id="importFileName">No file chosen</span>
+      </div>
+    </div>
+    <div class="import-result" id="importResult" style="display:none"></div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn-ghost" onclick="closeImportModal()">Close</button>
+    <button class="btn-primary" id="importUploadBtn" onclick="uploadCsv()" disabled>
+      <i class="ti ti-upload"></i><span>Upload</span>
+    </button>
   </div>
 </div>
 
@@ -1015,6 +1178,110 @@ function cancelAddCountry() {
     </button>`;
 }
 
+// ── Import CSV ─────────────────────────────────────────────────
+const IMPORT_TEMPLATE_COLUMNS = [
+  'name','country','city','website','programs',
+  'ielts_min','toefl_min','gpa_min',
+  'tuition_min','tuition_max','tuition_currency',
+  'intakes','scholarship_available','notes',
+];
+let importFile = null;
+
+function openImportModal() {
+  importFile = null;
+  document.getElementById('csvFileInput').value = '';
+  const nameEl = document.getElementById('importFileName');
+  nameEl.textContent = 'No file chosen';
+  nameEl.classList.remove('has-file');
+  document.getElementById('importUploadBtn').disabled = true;
+  document.getElementById('importStep').style.display = '';
+  const result = document.getElementById('importResult');
+  result.style.display = 'none';
+  result.innerHTML = '';
+  document.getElementById('importModal').classList.add('open');
+  document.getElementById('importBackdrop').classList.add('open');
+}
+
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('open');
+  document.getElementById('importBackdrop').classList.remove('open');
+}
+
+function onCsvPicked() {
+  const input = document.getElementById('csvFileInput');
+  importFile = (input.files && input.files[0]) || null;
+  const label = document.getElementById('importFileName');
+  if (importFile) {
+    label.textContent = importFile.name;
+    label.classList.add('has-file');
+    document.getElementById('importUploadBtn').disabled = false;
+  } else {
+    label.textContent = 'No file chosen';
+    label.classList.remove('has-file');
+    document.getElementById('importUploadBtn').disabled = true;
+  }
+}
+
+function downloadTemplate() {
+  const csv = IMPORT_TEMPLATE_COLUMNS.join(',') + '\n';
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'universities-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function uploadCsv() {
+  if (!importFile) return;
+  const btn = document.getElementById('importUploadBtn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="btn-spinner"></span><span>Uploading…</span>';
+
+  const form = new FormData();
+  form.append('file', importFile);
+
+  try {
+    const r = await fetch(API_BASE + '/admin/import-csv', { method:'POST', body:form });
+    if (!r.ok) {
+      let detail = 'HTTP ' + r.status;
+      try { const errBody = await r.json(); if (errBody.detail) detail = errBody.detail; } catch {}
+      throw new Error(detail);
+    }
+    const summary = await r.json();
+    renderImportResult(summary);
+    toast(`Imported: +${summary.added} / ~${summary.updated} / ${summary.skipped} skipped`, 'success');
+    await loadAll();
+  } catch (err) {
+    console.error(err);
+    toast('Import failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
+}
+
+function renderImportResult(summary) {
+  document.getElementById('importStep').style.display = 'none';
+  const result = document.getElementById('importResult');
+  result.style.display = '';
+  const errors = summary.errors || [];
+  const errorsHtml = errors.length ? `
+    <div class="import-errors">
+      <div class="import-errors-title">${errors.length} ${errors.length === 1 ? 'issue' : 'issues'}</div>
+      <ul>${errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+    </div>` : '';
+  result.innerHTML = `
+    <div class="import-result-stats">
+      <div class="import-stat added"><div class="n">${summary.added ?? 0}</div><div class="label">Added</div></div>
+      <div class="import-stat updated"><div class="n">${summary.updated ?? 0}</div><div class="label">Updated</div></div>
+      <div class="import-stat skipped"><div class="n">${summary.skipped ?? 0}</div><div class="label">Skipped</div></div>
+    </div>
+    ${errorsHtml}
+  `;
+}
+
 // ── Toast ──────────────────────────────────────────────────────
 function toast(msg, type = 'success') {
   const wrap = document.getElementById('toastWrap');
@@ -1045,7 +1312,8 @@ document.getElementById('uniSearch').addEventListener('input', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (document.getElementById('drawer').classList.contains('open')) closeDrawer();
+    if (document.getElementById('importModal').classList.contains('open')) closeImportModal();
+    else if (document.getElementById('drawer').classList.contains('open')) closeDrawer();
   }
 });
 

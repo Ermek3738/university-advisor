@@ -50,50 +50,67 @@ def apply_fields(uni: University, fields: dict):
     for key, value in fields.items():
         setattr(uni, key, value)
 
-def import_csv(filepath: str, update: bool = False):
+def import_csv(filepath: str, update: bool = False) -> dict:
     db = SessionLocal()
     added = 0
     updated = 0
     skipped = 0
+    errors: list[str] = []
 
-    with open(filepath, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        reader.fieldnames = [h.strip().lower() for h in reader.fieldnames]
+    try:
+        with open(filepath, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            if not reader.fieldnames:
+                errors.append("CSV is empty or has no header row")
+                return {"added": 0, "updated": 0, "skipped": 0, "errors": errors}
+            reader.fieldnames = [h.strip().lower() for h in reader.fieldnames]
 
-        for raw_row in reader:
-            row = {
-                k.strip().lower(): (v.strip() if v else "")
-                for k, v in raw_row.items()
-                if k is not None
-            }
+            # row_num: header is line 1, first data row is line 2
+            for row_num, raw_row in enumerate(reader, start=2):
+                row = {
+                    k.strip().lower(): (v.strip() if v else "")
+                    for k, v in raw_row.items()
+                    if k is not None
+                }
 
-            if not row.get("name") or not row.get("website"):
-                print(f"  ⚠️  Skipping row — missing name or website: {row}")
-                skipped += 1
-                continue
-
-            fields = parse_row(row)
-            exists = db.query(University).filter_by(name=row["name"]).first()
-
-            if exists:
-                if update:
-                    apply_fields(exists, fields)
-                    # Reset scrape status so the scraper refreshes this record
-                    exists.scrape_status = "pending"
-                    updated += 1
-                    print(f"  🔄 Updated: {row['name']}")
-                else:
+                if not row.get("name") or not row.get("website"):
+                    print(f"  ⚠️  Skipping row — missing name or website: {row}")
                     skipped += 1
-                continue
+                    errors.append(f"Row {row_num}: missing name or website")
+                    continue
 
-            uni = University()
-            apply_fields(uni, fields)
-            db.add(uni)
-            added += 1
+                try:
+                    fields = parse_row(row)
+                except (ValueError, TypeError) as exc:
+                    print(f"  ⚠️  Skipping row — parse error: {row.get('name','?')}: {exc}")
+                    skipped += 1
+                    errors.append(f"Row {row_num} ({row.get('name', '?')}): {exc}")
+                    continue
 
-    db.commit()
-    db.close()
+                exists = db.query(University).filter_by(name=row["name"]).first()
+
+                if exists:
+                    if update:
+                        apply_fields(exists, fields)
+                        # Reset scrape status so the scraper refreshes this record
+                        exists.scrape_status = "pending"
+                        updated += 1
+                        print(f"  🔄 Updated: {row['name']}")
+                    else:
+                        skipped += 1
+                    continue
+
+                uni = University()
+                apply_fields(uni, fields)
+                db.add(uni)
+                added += 1
+
+        db.commit()
+    finally:
+        db.close()
+
     print(f"\n✅ Done! Added: {added} | Updated: {updated} | Skipped/duplicates: {skipped}")
+    return {"added": added, "updated": updated, "skipped": skipped, "errors": errors}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

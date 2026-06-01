@@ -14,7 +14,7 @@ Run locally:
   uvicorn main:app --reload
 """
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
@@ -26,6 +26,7 @@ import asyncio
 import logging
 import os
 import sys
+import tempfile
 
 # Load .env from the backend/ directory first, then fall back to the repo root.
 _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -648,6 +649,36 @@ def admin_delete_university(uni_id: int, db: Session = Depends(get_db)):
     db.delete(u)
     db.commit()
     return {"deleted": True, "id": uni_id}
+
+
+@app.post("/admin/import-csv")
+async def admin_import_csv(file: UploadFile = File(...)):
+    """Bulk-import universities from an uploaded CSV.
+
+    Existing rows (matched by `name`) are updated; new rows are inserted.
+    Returns a summary: ``{added, updated, skipped, errors}``.
+    """
+    filename = (file.filename or "").lower()
+    if not filename.endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only .csv files are accepted")
+
+    with tempfile.NamedTemporaryFile(mode="wb", suffix=".csv", delete=False) as tmp:
+        tmp_path = tmp.name
+        tmp.write(await file.read())
+
+    try:
+        from import_universities import import_csv
+        summary = import_csv(tmp_path, update=True)
+    except Exception as exc:
+        logger.exception("CSV import failed")
+        raise HTTPException(status_code=500, detail=f"Import failed: {exc}")
+    finally:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+
+    return summary
 
 
 # ── Startup: auto-import partner CSV if DB is empty ────────────────────────────
