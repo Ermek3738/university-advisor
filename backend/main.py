@@ -38,7 +38,7 @@ _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(_BACKEND_DIR, ".env"))
 load_dotenv(os.path.join(_BACKEND_DIR, "..", ".env"))
 
-from models import University, SessionLocal, get_db, to_usd, utcnow
+from models import University, UniversitySubjectRanking, SessionLocal, get_db, to_usd, utcnow
 from config import (
     MIN_RESULTS,
     MAX_UNIVERSITIES_TO_CLAUDE,
@@ -284,12 +284,35 @@ def build_coverage_summary(db: Session) -> str:
     )
 
 
-def universities_to_context(unis: List[University]) -> str:
+def get_subject_rankings_for_unis(db: Session, uni_ids: list) -> dict:
+    """Returns {university_id: [(subject, rank_display, score), ...]} sorted by rank_numeric."""
+    if not uni_ids:
+        return {}
+    rows = db.query(UniversitySubjectRanking)\
+        .filter(UniversitySubjectRanking.university_id.in_(uni_ids))\
+        .order_by(UniversitySubjectRanking.rank_numeric.asc())\
+        .all()
+    result: dict = {}
+    for r in rows:
+        result.setdefault(r.university_id, []).append((r.subject, r.rank_display, r.score))
+    return result
+
+
+def universities_to_context(unis: List[University], subject_rankings: Optional[dict] = None) -> str:
     """Serialize universities to text for Claude's context."""
+    subject_rankings = subject_rankings or {}
     lines = []
     for u in unis:
         line = f"- **{u.name}** ({u.country}, {u.city})"
         line += f"\n  Website: {u.website}"
+        if u.qs_ranking_display:
+            line += f"\n  QS World Ranking 2026: #{u.qs_ranking_display}"
+        elif u.qs_ranking:
+            line += f"\n  QS World Ranking 2026: #{u.qs_ranking}"
+        if u.id in subject_rankings:
+            top_subjects = subject_rankings[u.id][:5]  # top 5 subjects only
+            subj_lines = ", ".join([f"{s} #{r}" for s, r, _ in top_subjects])
+            line += f"\n  QS Subject Rankings 2026: {subj_lines}"
         if u.tuition_usd:
             line += f"\n  Tuition: ~${u.tuition_usd:,.0f}/year (USD)"
         elif u.tuition_min:
@@ -330,7 +353,9 @@ For EACH university use EXACTLY this format:
 🌐 [website link]
 📍 Город/Страна: [City, Country]
 
-🏆 Рейтинг: [QS World Ranking if known, otherwise leave blank]
+🏆 Рейтинг: [ONLY use the QS 2026 rank from the database field "QS World Ranking 2026". Show the exact value as stored, e.g. "#35" or "#801-850". If the field is absent or null → write "Нет в рейтинге QS". NEVER invent or guess a ranking number.]
+
+📊 Рейтинг по специальностям: [If "QS Subject Rankings 2026" is present in the database context, list the subjects and ranks exactly as given. Format: "Business & Management #41, Computer Science #58". If absent → omit this section entirely. NEVER invent subject rankings.]
 
 ℹ️ О университете: [2-3 sentences about the university strengths and why international students choose it]
 
@@ -362,7 +387,10 @@ For EACH university use EXACTLY this format:
 ---
 
 After all 5 add a comparison table and a 3-sentence consultant recommendation in Russian.
-Use your own knowledge for rankings, living costs, visa info and career prospects.
+Use your own knowledge for living costs, visa info and career prospects.
+
+CRITICAL RANKING RULE: Rankings shown to the student must come ONLY from the database fields "QS World Ranking 2026" and "QS Subject Rankings 2026". If these fields are not present for a university, write "Нет в рейтинге QS". Never use your training knowledge to fill in a ranking number.
+
 Be specific and actionable. The consultant will share this directly with the student."""
 
 # ── Chat endpoint ──────────────────────────────────────────────────────────────
@@ -377,7 +405,9 @@ async def chat(profile: StudentProfile, db: Session = Depends(get_db)):
 
     # Step 3: Build Claude context
     coverage = build_coverage_summary(db)
-    uni_context = universities_to_context(matched)
+    uni_ids = [u.id for u in matched]
+    subject_rankings = get_subject_rankings_for_unis(db, uni_ids)
+    uni_context = universities_to_context(matched, subject_rankings)
     system = (
         SYSTEM_PROMPT
         + f"\n\n## DATABASE COVERAGE OVERVIEW:\n{coverage}"

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime, inspect, text
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime, ForeignKey, inspect, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timezone
@@ -49,7 +49,8 @@ class University(Base):
 
     scholarship_available = Column(String, nullable=True)  # "Yes / No / Partial"
     notes = Column(Text, nullable=True)           # any extra info from scrape
-    qs_ranking = Column(Integer, nullable=True)   # QS World University Ranking
+    qs_ranking = Column(Integer, nullable=True)   # QS World University Ranking (numeric / lower bound)
+    qs_ranking_display = Column(String, nullable=True)   # exact display string e.g. "801-850" or "35"
     qs_ranking_updated_at = Column(DateTime, nullable=True)
 
     tuition_usd = Column(Float, nullable=True)           # always USD, populated post-scrape
@@ -59,6 +60,19 @@ class University(Base):
     last_scraped = Column(DateTime, nullable=True)
     re_scrape_after = Column(DateTime, nullable=True)   # auto-requeue after this date
     created_at = Column(DateTime, default=utcnow)
+
+
+class UniversitySubjectRanking(Base):
+    __tablename__ = "university_subject_rankings"
+
+    id = Column(Integer, primary_key=True)
+    university_id = Column(Integer, ForeignKey("universities.id"), nullable=False)
+    subject = Column(String, nullable=False)       # e.g. "Business & Management Studies"
+    rank_display = Column(String, nullable=True)   # e.g. "401-450" or "54"
+    rank_numeric = Column(Integer, nullable=True)  # lower bound: 401 or 54
+    score = Column(Float, nullable=True)
+    updated_at = Column(DateTime, default=utcnow)
+
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -84,9 +98,15 @@ def run_migrations(engine):
         if "qs_ranking" not in columns:
             conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking INTEGER"))
             conn.commit()
+        if "qs_ranking_display" not in columns:
+            conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking_display VARCHAR"))
+            conn.commit()
         if "qs_ranking_updated_at" not in columns:
             conn.execute(text("ALTER TABLE universities ADD COLUMN qs_ranking_updated_at TIMESTAMP"))
             conn.commit()
+
+    # Create any new tables (e.g. university_subject_rankings) that don't exist yet.
+    Base.metadata.create_all(bind=engine)
 
 
 run_migrations(engine)
