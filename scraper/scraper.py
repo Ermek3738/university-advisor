@@ -40,7 +40,7 @@ from models import University, SessionLocal, utcnow, to_usd  # noqa: E402
 
 # ── Configuration ──────────────────────────────────────────────────────────────
 
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 MAX_PAGE_CHARS = 20_000     # plain-text characters sent to Claude per page

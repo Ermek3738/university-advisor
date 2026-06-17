@@ -46,5 +46,5 @@ BUDGET_HEADROOM_THRESHOLD = 0.2   # tuition must be 20%+ below budget
 GPA_HEADROOM_THRESHOLD    = 0.5   # student must be 0.5+ above min GPA
 
 # ── Claude configuration ────────────────────────────────────────
-CLAUDE_MODEL      = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+CLAUDE_MODEL      = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 CLAUDE_MAX_TOKENS = 2000

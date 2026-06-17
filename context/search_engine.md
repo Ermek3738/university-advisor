@@ -482,7 +482,7 @@ async def chat_stream(profile: StudentProfile, db: Session = Depends(get_db)):
 
     def generate():
         with client.messages.stream(
-            model=os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
+            model=os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6"),
             max_tokens=2000,
             system=system,
             messages=messages,
@@ -497,7 +497,7 @@ async def chat_stream(profile: StudentProfile, db: Session = Depends(get_db)):
 **2. Externalize model version:**
 ```python
 # Top of main.py
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 # In chat():
 response = client.messages.create(model=MODEL, ...)
